@@ -1,0 +1,91 @@
+---
+import AppShell from '../components/AppShell.astro';
+import Icon from '../components/Icon.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import { formatDayMonth, hexToRgba } from '../lib/format';
+import { getOrganizationBundle, resolveEvents } from '../lib/planner';
+
+const currentUser = Astro.locals.currentUser!;
+const dataset = getOrganizationBundle(currentUser);
+const resolvedEvents = resolveEvents(dataset);
+---
+
+<AppShell title="Empresas | Marketing Planner" currentPath="/clients" currentUser={currentUser} organization={dataset.organization}>
+  <section class="grid gap-6">
+    <div class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="text-sm text-slate-500">Gestión de clientes</p>
+          <h1 class="mt-2 font-display text-4xl font-semibold text-slate-950">Empresas / clientes</h1>
+          <p class="mt-3 max-w-2xl text-base leading-8 text-slate-600">
+            Página preparada para crear, editar y desactivar empresas, manteniendo su color visual como identificador principal en todo el planner.
+          </p>
+        </div>
+        <button class="inline-flex items-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
+          <Icon name="plus" size={16} />
+          Nueva empresa
+        </button>
+      </div>
+    </div>
+
+    <div class="grid gap-5 lg:grid-cols-2">
+      {dataset.clients.map((client) => {
+        const clientEvents = resolvedEvents.filter((event) => event.clientId === client.id);
+        const nextEvent = clientEvents.find((event) => new Date(event.startsAt) >= new Date('2026-06-02T09:00:00'));
+        return (
+          <article class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div
+                  class="grid h-14 w-14 place-items-center rounded-[22px] text-white shadow-lg"
+                  style={`background:linear-gradient(135deg, ${client.color}, ${hexToRgba(client.color, 0.7)});`}
+                >
+                  <Icon name="company" size={20} />
+                </div>
+                <div>
+                  <p class="font-display text-3xl font-semibold text-slate-950">{client.name}</p>
+                  <p class="mt-2 max-w-md text-sm leading-7 text-slate-500">{client.description}</p>
+                </div>
+              </div>
+              <StatusBadge label={client.active ? 'Activa' : 'Inactiva'} tone={client.active ? 'success' : 'muted'} />
+            </div>
+
+            <div class="mt-6 grid gap-4 sm:grid-cols-3">
+              <div class="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+                <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Eventos</p>
+                <p class="mt-2 text-3xl font-semibold text-slate-900">{clientEvents.length}</p>
+              </div>
+              <div class="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+                <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Pendientes</p>
+                <p class="mt-2 text-3xl font-semibold text-slate-900">
+                  {clientEvents.filter((event) => event.status === 'pending').length}
+                </p>
+              </div>
+              <div class="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+                <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Próximo</p>
+                <p class="mt-2 text-lg font-semibold text-slate-900">
+                  {nextEvent ? formatDayMonth(new Date(nextEvent.startsAt)) : 'Sin fecha'}
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a href={`/calendar?client=${client.id}`} class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
+                Ver en calendario
+                <Icon name="chevron-right" size={14} />
+              </a>
+              <button class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                <Icon name="edit" size={14} />
+                Editar
+              </button>
+              <button class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                <Icon name="filter" size={14} />
+                Desactivar
+              </button>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+</AppShell>

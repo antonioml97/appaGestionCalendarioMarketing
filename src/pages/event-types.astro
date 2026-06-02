@@ -1,0 +1,77 @@
+---
+import AppShell from '../components/AppShell.astro';
+import Icon from '../components/Icon.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import { hexToRgba } from '../lib/format';
+import { getOrganizationBundle, resolveEvents } from '../lib/planner';
+
+const currentUser = Astro.locals.currentUser!;
+const dataset = getOrganizationBundle(currentUser);
+const resolvedEvents = resolveEvents(dataset);
+---
+
+<AppShell title="Tipos de evento | Marketing Planner" currentPath="/event-types" currentUser={currentUser} organization={dataset.organization}>
+  <section class="grid gap-6">
+    <div class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="text-sm text-slate-500">Catálogo operativo</p>
+          <h1 class="mt-2 font-display text-4xl font-semibold text-slate-950">Tipos de evento</h1>
+          <p class="mt-3 max-w-2xl text-base leading-8 text-slate-600">
+            El sistema visual separa empresa, tipo y estado para que el calendario se lea rápido incluso con mucha densidad de contenido.
+          </p>
+        </div>
+        <button class="inline-flex items-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
+          <Icon name="plus" size={16} />
+          Nuevo tipo
+        </button>
+      </div>
+    </div>
+
+    <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      {dataset.eventTypes.map((type) => {
+        const usedCount = resolvedEvents.filter((event) => event.eventTypeId === type.id).length;
+        return (
+          <article class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
+            <div class="flex items-start justify-between gap-4">
+              <div
+                class="flex h-14 w-14 items-center justify-center rounded-[22px]"
+                style={`background:${hexToRgba(type.color, 0.12)}; color:${type.color};`}
+              >
+                <Icon name={type.icon} size={22} />
+              </div>
+              <StatusBadge label={type.active ? 'Activo' : 'Inactivo'} tone={type.active ? 'info' : 'muted'} />
+            </div>
+
+            <h2 class="mt-5 font-display text-3xl font-semibold text-slate-950">{type.name}</h2>
+            <p class="mt-3 text-sm leading-7 text-slate-500">{type.description}</p>
+
+            <div class="mt-6 flex items-end justify-between">
+              <div>
+                <p class="text-xs uppercase tracking-[0.18em] text-slate-400">Uso en calendario</p>
+                <p class="mt-2 text-3xl font-semibold text-slate-900">{usedCount}</p>
+              </div>
+              <span
+                class="rounded-full px-4 py-2 text-sm font-semibold"
+                style={`background:${hexToRgba(type.color, 0.12)}; color:${type.color};`}
+              >
+                {type.color}
+              </span>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+              <button class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                <Icon name="edit" size={14} />
+                Editar
+              </button>
+              <a href={`/calendar?type=${type.id}`} class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
+                Ver eventos
+                <Icon name="chevron-right" size={14} />
+              </a>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+</AppShell>

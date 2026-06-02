@@ -1,0 +1,40 @@
+---
+import { capitalize, formatDayMonth, formatShortWeekday } from '../../lib/format';
+import { buildHref } from '../../lib/url';
+import type { ResolvedCalendarEvent } from '../../types/planner';
+import EventCard from './EventCard.astro';
+
+interface Props {
+  weekItems: { day: Date; events: ResolvedCalendarEvent[] }[];
+  selectedEventId?: string;
+  searchParams: URLSearchParams;
+}
+
+const { weekItems, selectedEventId, searchParams } = Astro.props;
+---
+
+<div class="grid gap-4 lg:grid-cols-7">
+  {weekItems.map((item) => (
+    <section class="rounded-[28px] border border-white/80 bg-white/92 p-4 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)]">
+      <div class="mb-4">
+        <p class="text-sm font-semibold text-slate-900">{capitalize(formatShortWeekday(item.day).replace('.', ''))}</p>
+        <p class="text-xs text-slate-500">{formatDayMonth(item.day)}</p>
+      </div>
+      <div class="space-y-3">
+        {item.events.length ? (
+          item.events.map((event) => (
+            <EventCard
+              event={event}
+              href={buildHref('/calendar', searchParams, { event: event.id })}
+              selected={selectedEventId === event.id}
+            />
+          ))
+        ) : (
+          <div class="rounded-3xl border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-400">
+            Sin eventos
+          </div>
+        )}
+      </div>
+    </section>
+  ))}
+</div>

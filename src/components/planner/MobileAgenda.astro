@@ -1,0 +1,32 @@
+---
+import { capitalize, formatLongDate } from '../../lib/format';
+import { buildHref } from '../../lib/url';
+import type { ResolvedCalendarEvent } from '../../types/planner';
+import EventCard from './EventCard.astro';
+
+interface Props {
+  groups: { date: Date; events: ResolvedCalendarEvent[] }[];
+  selectedEventId?: string;
+  searchParams: URLSearchParams;
+}
+
+const { groups, selectedEventId, searchParams } = Astro.props;
+---
+
+<div class="space-y-4">
+  {groups.map((group) => (
+    <section class="rounded-[28px] border border-white/80 bg-white/95 p-4 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.32)]">
+      <h3 class="mb-4 text-sm font-semibold text-slate-500">{capitalize(formatLongDate(group.date))}</h3>
+      <div class="space-y-3">
+        {group.events.map((event) => (
+          <EventCard
+            event={event}
+            href={buildHref('/calendar', searchParams, { event: event.id })}
+            selected={selectedEventId === event.id}
+            mode="list"
+          />
+        ))}
+      </div>
+    </section>
+  ))}
+</div>

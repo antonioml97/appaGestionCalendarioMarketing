@@ -1,0 +1,108 @@
+---
+import AppShell from '../components/AppShell.astro';
+import Icon from '../components/Icon.astro';
+import EventCard from '../components/planner/EventCard.astro';
+import { parseDateParam } from '../lib/calendar';
+import { formatMonthYear } from '../lib/format';
+import {
+  getDashboardMetrics,
+  getOrganizationBundle,
+  getUpcomingEvents,
+  resolveEvents,
+} from '../lib/planner';
+
+const currentUser = Astro.locals.currentUser!;
+const dataset = getOrganizationBundle(currentUser);
+const resolvedEvents = resolveEvents(dataset);
+const baseDate = parseDateParam(Astro.url.searchParams.get('date'));
+const metrics = getDashboardMetrics(resolvedEvents, baseDate);
+const upcoming = getUpcomingEvents(resolvedEvents, baseDate, 6);
+---
+
+<AppShell title="Dashboard | Marketing Planner" currentPath="/dashboard" currentUser={currentUser} organization={dataset.organization}>
+  <section class="mb-4 md:hidden">
+    <div class="rounded-[28px] border border-white/80 bg-white/90 px-5 py-5 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
+      <p class="text-sm text-slate-500">Dashboard</p>
+      <h1 class="mt-1 font-display text-3xl font-semibold text-slate-950">Vista general</h1>
+    </div>
+  </section>
+
+  <section class="grid gap-6">
+    <article class="rounded-[36px] border border-white/80 bg-[linear-gradient(135deg,_rgba(49,46,129,0.98),_rgba(79,70,229,0.96)_60%,_rgba(124,58,237,0.92))] p-6 text-white shadow-[0_40px_120px_-44px_rgba(79,70,229,0.5)] lg:p-8">
+      <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.22em] text-white/65">Resumen del periodo</p>
+          <h1 class="mt-4 font-display text-5xl leading-[1.02] font-semibold">
+            Todo el equipo ve qué sale, para quién y con qué carga.
+          </h1>
+          <p class="mt-5 max-w-2xl text-base leading-8 text-white/78">
+            La capa visual ya refleja el briefing: métricas rápidas, próximos eventos y un calendario editorial preparado para crecer con datos reales.
+          </p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {[
+            { label: 'Eventos próximos 7 días', value: metrics.weekTotal, icon: 'calendar' as const },
+            { label: 'Pendientes', value: metrics.pendingTotal, icon: 'clock' as const },
+            { label: 'Publicados', value: metrics.publishedTotal, icon: 'publish' as const },
+            { label: 'Empresas activas', value: metrics.activeClients, icon: 'company' as const },
+          ].map((metric) => (
+            <div class="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
+              <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10">
+                <Icon name={metric.icon} size={18} />
+              </div>
+              <p class="text-4xl font-semibold">{metric.value}</p>
+              <p class="mt-2 text-sm text-white/70">{metric.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </article>
+
+    <div class="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <section class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
+        <div class="mb-5 flex items-center justify-between">
+          <div>
+            <p class="text-sm text-slate-500">Próximos eventos</p>
+            <h2 class="font-display text-3xl font-semibold text-slate-950">{formatMonthYear(baseDate)}</h2>
+          </div>
+          <a href="/calendar" class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
+            Ir al calendario
+            <Icon name="chevron-right" size={14} />
+          </a>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2">
+          {upcoming.map((event) => (
+            <EventCard event={event} href={`/calendar?event=${event.id}`} mode="list" />
+          ))}
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
+          <p class="text-sm text-slate-500">Ritmo del equipo</p>
+          <h2 class="mt-2 font-display text-3xl font-semibold text-slate-950">Qué está pasando ahora</h2>
+          <div class="mt-6 space-y-4">
+            {[
+              { label: 'Calendario listo para vista mensual, semanal y diaria', tone: 'from-violet-500 to-indigo-500' },
+              { label: 'Filtros combinados por empresa, tipo y estado', tone: 'from-emerald-500 to-teal-500' },
+              { label: 'Modelo de datos multi-tenant ya reflejado en schema y mocks', tone: 'from-amber-500 to-orange-500' },
+            ].map((item) => (
+              <div class="flex items-start gap-4 rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+                <div class:list={['mt-1 h-3 w-3 rounded-full bg-gradient-to-r', item.tone]} />
+                <p class="text-sm leading-7 text-slate-600">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
+          <p class="text-sm text-slate-500">Siguiente paso natural</p>
+          <h2 class="mt-2 font-display text-3xl font-semibold text-slate-950">Conectar persistencia real</h2>
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            La estructura ya deja lista la migración a Netlify Database con Drizzle, login real y CRUD persistente sin rehacer la UI.
+          </p>
+        </div>
+      </section>
+    </div>
+  </section>
+</AppShell>

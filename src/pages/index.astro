@@ -1,0 +1,7 @@
+---
+if (Astro.locals.currentUser) {
+  return Astro.redirect('/calendar');
+}
+
+return Astro.redirect('/login');
+---

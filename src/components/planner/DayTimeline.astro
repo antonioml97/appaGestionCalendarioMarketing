@@ -1,0 +1,47 @@
+---
+import { formatLongDate, formatTime } from '../../lib/format';
+import { buildHref } from '../../lib/url';
+import type { ResolvedCalendarEvent } from '../../types/planner';
+import EventCard from './EventCard.astro';
+
+interface Props {
+  focusDate: Date;
+  events: ResolvedCalendarEvent[];
+  selectedEventId?: string;
+  searchParams: URLSearchParams;
+}
+
+const { focusDate, events, selectedEventId, searchParams } = Astro.props;
+---
+
+<section class="rounded-[30px] border border-white/80 bg-white/96 p-5 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)]">
+  <div class="mb-5 flex items-center justify-between">
+    <div>
+      <p class="font-display text-2xl font-semibold text-slate-900">{formatLongDate(focusDate)}</p>
+      <p class="text-sm text-slate-500">Planificación detallada del día seleccionado</p>
+    </div>
+    <div class="rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
+      {events.length} eventos
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    {events.length ? (
+      events.map((event) => (
+        <div class="grid gap-4 rounded-[26px] border border-slate-100 p-4 md:grid-cols-[90px_minmax(0,1fr)]">
+          <div class="text-sm font-semibold text-slate-500">{formatTime(event.startsAt)}</div>
+          <EventCard
+            event={event}
+            href={buildHref('/calendar', searchParams, { event: event.id })}
+            selected={selectedEventId === event.id}
+            mode="list"
+          />
+        </div>
+      ))
+    ) : (
+      <div class="rounded-[26px] border border-dashed border-slate-200 px-6 py-16 text-center text-slate-400">
+        No hay eventos programados para esta fecha.
+      </div>
+    )}
+  </div>
+</section>

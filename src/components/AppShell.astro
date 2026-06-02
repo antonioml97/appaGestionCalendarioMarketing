@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import type { Organization, PlannerUser } from '../types/planner';
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  currentPath: string;
+  currentUser: PlannerUser;
+  organization: Organization;
+}
+
+const { title, currentPath, currentUser, organization } = Astro.props;
+
+const links = [
+  { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' as const },
+  { href: '/calendar', label: 'Calendario', icon: 'calendar' as const },
+  { href: '/clients', label: 'Empresas', icon: 'company' as const },
+  { href: '/event-types', label: 'Tipos', icon: 'spark' as const },
+  { href: '/settings', label: 'Ajustes', icon: 'settings' as const },
+];
+---
+
+<BaseLayout title={title}>
+  <div class="mx-auto flex min-h-screen w-full max-w-[1600px] flex-col px-4 pb-28 pt-4 md:px-6 md:pt-6">
+    <header class="hidden items-center justify-between rounded-[32px] border border-white/70 bg-white/85 px-6 py-4 shadow-[0_20px_60px_-30px_rgba(79,70,229,0.35)] backdrop-blur md:flex">
+      <div class="flex items-center gap-4">
+        <a href="/calendar" class="flex items-center gap-3 rounded-2xl pr-3 transition hover:bg-slate-50">
+          <div class="grid h-12 w-12 place-items-center rounded-2xl bg-[linear-gradient(135deg,_#312e81,_#4f46e5_60%,_#7c3aed)] text-white shadow-lg">
+            <span class="font-display text-xl font-semibold">M</span>
+          </div>
+          <div>
+            <p class="font-display text-lg font-semibold text-slate-900">Marketing Planner</p>
+            <p class="text-sm text-slate-500">{organization.name}</p>
+          </div>
+        </a>
+        <nav class="hidden items-center gap-2 xl:flex">
+          {links.map((link) => {
+            const active = currentPath.startsWith(link.href);
+            return (
+              <a
+                href={link.href}
+                class:list={[
+                  'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition',
+                  active
+                    ? 'bg-[linear-gradient(135deg,_#eef2ff,_#e0e7ff)] text-indigo-700 shadow-sm'
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
+                ]}
+              >
+                <Icon name={link.icon} size={16} />
+                {link.label}
+              </a>
+            );
+          })}
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-500 lg:block">
+          Entorno demo con arquitectura preparada para Netlify + Drizzle
+        </div>
+        <div class="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
+          <div
+            class="grid h-10 w-10 place-items-center rounded-full text-sm font-semibold text-white"
+            style={`background:${currentUser.avatarColor};`}
+          >
+            {currentUser.name
+              .split(' ')
+              .slice(0, 2)
+              .map((part) => part[0])
+              .join('')}
+          </div>
+          <div class="min-w-0">
+            <p class="truncate text-sm font-semibold text-slate-900">{currentUser.name}</p>
+            <p class="truncate text-xs text-slate-500">{currentUser.title}</p>
+          </div>
+          <a
+            href="/api/logout"
+            class="inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-50 hover:text-slate-700"
+            aria-label="Cerrar sesión"
+          >
+            <Icon name="logout" size={18} />
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 pt-4 md:pt-6">
+      <slot />
+    </main>
+  </div>
+
+  <nav class="fixed inset-x-4 bottom-4 z-40 rounded-[28px] border border-white/80 bg-white/95 p-2 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.35)] backdrop-blur md:hidden">
+    <div class="grid grid-cols-5 gap-1">
+      {links.map((link) => {
+        const active = currentPath.startsWith(link.href);
+        return (
+          <a
+            href={link.href}
+            class:list={[
+              'flex flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-[11px] font-semibold transition',
+              active
+                ? 'bg-indigo-50 text-indigo-700'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
+            ]}
+          >
+            <Icon name={link.icon} size={18} />
+            {link.label}
+          </a>
+        );
+      })}
+    </div>
+  </nav>
+</BaseLayout>

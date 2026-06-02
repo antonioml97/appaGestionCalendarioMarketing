@@ -1,0 +1,75 @@
+---
+import { hexToRgba, formatTime } from '../../lib/format';
+import { statusTone } from '../../lib/planner';
+import type { ResolvedCalendarEvent } from '../../types/planner';
+import Icon from '../Icon.astro';
+import StatusBadge from '../StatusBadge.astro';
+
+interface Props {
+  event: ResolvedCalendarEvent;
+  href: string;
+  selected?: boolean;
+  mode?: 'calendar' | 'list';
+}
+
+const { event, href, selected = false, mode = 'calendar' } = Astro.props;
+const accent = event.displayColor;
+---
+
+<a
+  href={href}
+  class:list={[
+    'group block rounded-[20px] border p-3 transition duration-200',
+    mode === 'calendar' ? 'min-h-[88px]' : 'min-h-[112px]',
+    selected
+      ? 'border-indigo-300 bg-white shadow-[0_18px_40px_-24px_rgba(79,70,229,0.45)] ring-2 ring-indigo-100'
+      : 'border-white/70 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]',
+  ]}
+  style={`background:${hexToRgba(accent, mode === 'calendar' ? 0.08 : 0.10)}; border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.25)};`}
+>
+  {
+    mode === 'calendar' ? (
+      <>
+        <div class="mb-2 flex items-start gap-2">
+          <div
+            class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl"
+            style={`background:${hexToRgba(event.eventType.color, 0.14)}; color:${event.eventType.color};`}
+          >
+            <Icon name={event.eventType.icon} size={14} />
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="line-clamp-2 text-[12px] leading-4 font-semibold text-slate-900">{event.title}</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5">
+          <StatusBadge label={event.statusLabel} tone={statusTone[event.status]} />
+          <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500">
+            <Icon name="clock" size={11} />
+            {formatTime(event.startsAt)}
+          </span>
+        </div>
+      </>
+    ) : (
+      <>
+        <div class="mb-2 flex items-start gap-3">
+          <div
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl text-[13px]"
+            style={`background:${hexToRgba(event.eventType.color, 0.14)}; color:${event.eventType.color};`}
+          >
+            <Icon name={event.eventType.icon} size={17} />
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="line-clamp-2 text-sm font-semibold text-slate-900">{event.title}</p>
+            <p class="truncate pt-0.5 text-xs text-slate-500">{event.client.name}</p>
+          </div>
+          <p class="text-xs font-semibold text-slate-400">{formatTime(event.startsAt)}</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <StatusBadge label={event.statusLabel} tone={statusTone[event.status]} />
+        </div>
+      </>
+    )
+  }
+</a>

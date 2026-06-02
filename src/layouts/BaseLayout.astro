@@ -1,0 +1,26 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Marketing Planner: calendario editorial responsive para agencias y equipos de marketing.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(79,70,229,0.10),_transparent_35%),linear-gradient(180deg,_#f7f8fc_0%,_#f2f4fb_100%)] text-slate-900">
+    <slot />
+  </body>
+</html>

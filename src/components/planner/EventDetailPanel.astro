@@ -1,0 +1,168 @@
+---
+import { capitalize, formatLongDate, formatTime, getInitials, hexToRgba } from '../../lib/format';
+import { statusTone } from '../../lib/planner';
+import type { ResolvedCalendarEvent } from '../../types/planner';
+import Icon from '../Icon.astro';
+import StatusBadge from '../StatusBadge.astro';
+
+interface Props {
+  event?: ResolvedCalendarEvent;
+  closeHref: string;
+  mobile?: boolean;
+}
+
+const { event, closeHref, mobile = false } = Astro.props;
+---
+
+<section class:list={[
+  'rounded-[30px] border border-white/80 bg-white/96 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]',
+  mobile ? 'p-5' : 'p-6',
+]} >
+  {event ? (
+    <>
+      <div class="mb-6 flex items-start justify-between gap-4">
+        <div class="flex items-start gap-4">
+          <div
+            class="flex h-14 w-14 items-center justify-center rounded-[22px]"
+            style={`background:${hexToRgba(event.eventType.color, 0.14)}; color:${event.eventType.color};`}
+          >
+            <Icon name={event.eventType.icon} size={22} />
+          </div>
+          <div>
+            <p class="font-display text-[30px] leading-none font-semibold text-slate-900">{event.title}</p>
+            <div class="mt-3 flex items-center gap-2 text-sm text-slate-500">
+              <span class="h-2.5 w-2.5 rounded-full" style={`background:${event.client.color};`} />
+              {event.client.name}
+            </div>
+          </div>
+        </div>
+        <a
+          href={closeHref}
+          class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 text-slate-400 transition hover:bg-slate-50 hover:text-slate-700"
+          aria-label="Cerrar detalle"
+        >
+          <Icon name="close" size={16} />
+        </a>
+      </div>
+
+      <div class="space-y-5 text-sm text-slate-600">
+        <div class="grid gap-4">
+          <div class="grid grid-cols-[18px_minmax(0,1fr)] items-start gap-3">
+            <Icon name="campaign" class="mt-0.5 text-slate-400" size={16} />
+            <div>
+              <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Tipo de evento</p>
+              <p class="mt-1 font-semibold text-slate-800">{event.eventType.name}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-[18px_minmax(0,1fr)] items-start gap-3">
+            <Icon name="calendar" class="mt-0.5 text-slate-400" size={16} />
+            <div>
+              <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Fecha y hora</p>
+              <p class="mt-1 font-semibold text-slate-800">{capitalize(formatLongDate(new Date(event.startsAt)))}</p>
+              <p class="mt-1 text-slate-500">{formatTime(event.startsAt)}{event.endsAt ? ` · ${formatTime(event.endsAt)}` : ''}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-[18px_minmax(0,1fr)] items-start gap-3">
+            <Icon name="spark" class="mt-0.5 text-slate-400" size={16} />
+            <div>
+              <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Estado</p>
+              <div class="mt-2">
+                <StatusBadge label={event.statusLabel} tone={statusTone[event.status]} />
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-[18px_minmax(0,1fr)] items-start gap-3">
+            <Icon name="user" class="mt-0.5 text-slate-400" size={16} />
+            <div>
+              <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Responsable</p>
+              <div class="mt-2 flex items-center gap-3">
+                <div
+                  class="grid h-10 w-10 place-items-center rounded-full text-xs font-semibold text-white"
+                  style={`background:${event.responsible?.avatarColor ?? event.createdBy.avatarColor};`}
+                >
+                  {getInitials(event.responsible?.name ?? event.createdBy.name)}
+                </div>
+                <div>
+                  <p class="font-semibold text-slate-800">{event.responsible?.name ?? event.createdBy.name}</p>
+                  <p class="text-xs text-slate-500">{event.responsible?.title ?? event.createdBy.title}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Descripción</p>
+          <p class="mt-2 leading-7 text-slate-600">{event.description}</p>
+        </div>
+
+        <div>
+          <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Colores</p>
+          <div class="mt-3 space-y-3">
+            <div>
+              <p class="mb-2 text-xs font-semibold text-slate-500">Color de empresa</p>
+              <div class="flex gap-2">
+                {[event.client.color, '#ff9a76', '#5b8def', '#9b5cf6', '#7ad36c'].map((swatch) => (
+                  <span
+                    class:list={[
+                      'h-8 w-8 rounded-full border-4',
+                      swatch === event.client.color ? 'border-white shadow-lg ring-2 ring-slate-200' : 'border-transparent',
+                    ]}
+                    style={`background:${swatch};`}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <p class="mb-2 text-xs font-semibold text-slate-500">Color del evento</p>
+              <div class="flex gap-2">
+                {[event.eventType.color, '#f472b6', '#a5b4fc', '#fbbf24', '#60a5fa', '#67e8f9'].map((swatch) => (
+                  <span
+                    class:list={[
+                      'h-8 w-8 rounded-full border-4',
+                      swatch === event.eventType.color ? 'border-white shadow-lg ring-2 ring-slate-200' : 'border-transparent',
+                    ]}
+                    style={`background:${swatch};`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-7 space-y-3">
+        <button class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
+          <Icon name="edit" size={16} />
+          Editar
+        </button>
+        <div class="grid grid-cols-2 gap-3">
+          <button class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+            <Icon name="duplicate" size={16} />
+            Duplicar
+          </button>
+          <button class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+            <Icon name="publish" size={16} />
+            Marcar publicado
+          </button>
+        </div>
+        <button class="inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold text-rose-600 transition hover:bg-rose-50">
+          <Icon name="trash" size={16} />
+          Eliminar evento
+        </button>
+      </div>
+    </>
+  ) : (
+    <div class="grid min-h-[420px] place-items-center text-center">
+      <div class="max-w-[240px]">
+        <div class="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-[24px] bg-indigo-50 text-indigo-600">
+          <Icon name="calendar" size={26} />
+        </div>
+        <p class="font-display text-2xl font-semibold text-slate-900">Selecciona un evento</p>
+        <p class="mt-2 text-sm leading-6 text-slate-500">
+          Abre una card del calendario o de la agenda para ver detalle, colores y acciones rápidas.
+        </p>
+      </div>
+    </div>
+  )}
+</section>
