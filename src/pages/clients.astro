@@ -5,6 +5,9 @@ import StatusBadge from '../components/StatusBadge.astro';
 import { formatDayMonth, hexToRgba } from '../lib/format';
 import { getOrganizationBundle, resolveEvents } from '../lib/planner';
 
+/**
+ * Ruta de gestion visual de clientes y empresas.
+ */
 const currentUser = Astro.locals.currentUser!;
 const dataset = getOrganizationBundle(currentUser);
 const resolvedEvents = resolveEvents(dataset);

@@ -4,6 +4,9 @@ import { buildHref } from '../../lib/url';
 import type { ResolvedCalendarEvent } from '../../types/planner';
 import EventCard from './EventCard.astro';
 
+/**
+ * Props necesarias para la vista semanal del calendario.
+ */
 interface Props {
   weekItems: { day: Date; events: ResolvedCalendarEvent[] }[];
   selectedEventId?: string;

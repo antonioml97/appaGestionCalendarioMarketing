@@ -1,6 +1,9 @@
 ---
 import type { StatusTone } from '../types/planner';
 
+/**
+ * Props del badge reutilizable para estados de eventos.
+ */
 interface Props {
   label: string;
   tone?: StatusTone;
@@ -8,6 +11,9 @@ interface Props {
 
 const { label, tone = 'info' } = Astro.props;
 
+/**
+ * Clases visuales asociadas a cada tono de badge.
+ */
 const tones: Record<StatusTone, string> = {
   info: 'bg-blue-50 text-blue-700 ring-blue-100',
   warning: 'bg-amber-50 text-amber-700 ring-amber-100',

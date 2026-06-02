@@ -5,6 +5,9 @@ import StatusBadge from '../components/StatusBadge.astro';
 import { hexToRgba } from '../lib/format';
 import { getOrganizationBundle, resolveEvents } from '../lib/planner';
 
+/**
+ * Ruta para visualizar y administrar tipologias de eventos.
+ */
 const currentUser = Astro.locals.currentUser!;
 const dataset = getOrganizationBundle(currentUser);
 const resolvedEvents = resolveEvents(dataset);

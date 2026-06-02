@@ -1,5 +1,16 @@
+/**
+ * Tipo permitido para mutar valores de query params.
+ */
 type QueryValue = string | string[] | null | undefined;
 
+/**
+ * Construye una URL a partir de la ruta base y una serie de cambios en query params.
+ *
+ * @param pathname Ruta base.
+ * @param currentParams Parametros actuales de la URL.
+ * @param updates Cambios a aplicar sobre la query.
+ * @returns URL final con los parametros actualizados.
+ */
 export const buildHref = (
   pathname: string,
   currentParams: URLSearchParams,
@@ -24,6 +35,15 @@ export const buildHref = (
   return query ? `${pathname}?${query}` : pathname;
 };
 
+/**
+ * Alterna un valor dentro de una query multi-select.
+ *
+ * @param pathname Ruta base.
+ * @param currentParams Parametros actuales de la URL.
+ * @param key Nombre del parametro multi-select.
+ * @param value Valor que se quiere activar o desactivar.
+ * @returns URL con el valor alternado.
+ */
 export const toggleQueryValue = (
   pathname: string,
   currentParams: URLSearchParams,

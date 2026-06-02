@@ -29,11 +29,17 @@ import {
 import { buildHref } from '../lib/url';
 import type { CalendarView, EventStatus } from '../types/planner';
 
+/**
+ * Ruta principal del planner con filtros, navegacion temporal y detalle de evento.
+ */
 const currentUser = Astro.locals.currentUser!;
 const dataset = getOrganizationBundle(currentUser);
 const resolvedEvents = resolveEvents(dataset);
 const searchParams = Astro.url.searchParams;
 
+/**
+ * Vistas soportadas por el calendario.
+ */
 const validViews: CalendarView[] = ['month', 'week', 'day', 'agenda'];
 const view = validViews.includes(searchParams.get('view') as CalendarView)
   ? (searchParams.get('view') as CalendarView)

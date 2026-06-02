@@ -4,6 +4,9 @@ import { buildHref } from '../../lib/url';
 import type { ResolvedCalendarEvent } from '../../types/planner';
 import EventCard from './EventCard.astro';
 
+/**
+ * Props para la vista detallada de un dia.
+ */
 interface Props {
   focusDate: Date;
   events: ResolvedCalendarEvent[];

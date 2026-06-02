@@ -4,12 +4,18 @@ import { toggleQueryValue, buildHref } from '../../lib/url';
 import type { Client, EventStatus, EventType } from '../../types/planner';
 import Icon from '../Icon.astro';
 
+/**
+ * Resumen agregado de carga semanal por cliente.
+ */
 interface WorkloadItem {
   clientId: string;
   total: number;
   percentage: number;
 }
 
+/**
+ * Props del sidebar de filtros y resumen de actividad.
+ */
 interface Props {
   clients: Client[];
   eventTypes: EventType[];
@@ -32,6 +38,9 @@ const {
   workload,
 } = Astro.props;
 
+/**
+ * Etiquetas visibles para los estados filtrables en la UI.
+ */
 const statusLabels = {
   pending: 'Pendiente',
   in_progress: 'En revisión',

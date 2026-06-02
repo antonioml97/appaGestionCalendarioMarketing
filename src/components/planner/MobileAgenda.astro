@@ -4,6 +4,9 @@ import { buildHref } from '../../lib/url';
 import type { ResolvedCalendarEvent } from '../../types/planner';
 import EventCard from './EventCard.astro';
 
+/**
+ * Props para la agenda agrupada por dia en movil o modo lista.
+ */
 interface Props {
   groups: { date: Date; events: ResolvedCalendarEvent[] }[];
   selectedEventId?: string;

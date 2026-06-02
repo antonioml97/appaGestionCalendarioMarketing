@@ -3,6 +3,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import type { Organization, PlannerUser } from '../types/planner';
 import Icon from './Icon.astro';
 
+/**
+ * Props del contenedor principal de la aplicacion autenticada.
+ */
 interface Props {
   title: string;
   currentPath: string;
@@ -12,6 +15,9 @@ interface Props {
 
 const { title, currentPath, currentUser, organization } = Astro.props;
 
+/**
+ * Navegacion principal compartida entre escritorio y movil.
+ */
 const links = [
   { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' as const },
   { href: '/calendar', label: 'Calendario', icon: 'calendar' as const },

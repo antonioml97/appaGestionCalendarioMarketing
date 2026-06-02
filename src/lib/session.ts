@@ -1,14 +1,8 @@
-import { users } from '../data/mockData';
+import { authenticateUser, findUserById } from '../db/repository';
 
+/**
+ * Nombre de la cookie usada para mantener la sesion de la app.
+ */
 export const SESSION_COOKIE = 'planner_session';
 
-export const findUserById = (userId?: string | null) =>
-  users.find((user) => user.id === userId && user.active);
-
-export const authenticateDemoUser = (email: string, password: string) =>
-  users.find(
-    (user) =>
-      user.active &&
-      user.email.toLowerCase() === email.toLowerCase() &&
-      user.demoPassword === password,
-  );
+export { authenticateUser, findUserById };

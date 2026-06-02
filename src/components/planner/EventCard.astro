@@ -5,6 +5,9 @@ import type { ResolvedCalendarEvent } from '../../types/planner';
 import Icon from '../Icon.astro';
 import StatusBadge from '../StatusBadge.astro';
 
+/**
+ * Props de una tarjeta de evento reutilizable entre calendario y agenda.
+ */
 interface Props {
   event: ResolvedCalendarEvent;
   href: string;
@@ -13,6 +16,10 @@ interface Props {
 }
 
 const { event, href, selected = false, mode = 'calendar' } = Astro.props;
+
+/**
+ * Color dominante usado para fondos y bordes de la tarjeta.
+ */
 const accent = event.displayColor;
 ---
 

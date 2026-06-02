@@ -11,6 +11,9 @@ import {
   resolveEvents,
 } from '../lib/planner';
 
+/**
+ * Ruta de resumen ejecutivo del calendario editorial.
+ */
 const currentUser = Astro.locals.currentUser!;
 const dataset = getOrganizationBundle(currentUser);
 const resolvedEvents = resolveEvents(dataset);

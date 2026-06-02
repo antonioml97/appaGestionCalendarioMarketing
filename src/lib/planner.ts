@@ -1,15 +1,17 @@
-import { clients, eventTypes, events, organizations, users } from '../data/mockData';
 import type {
   CalendarEvent,
   Client,
   EventStatus,
   PlannerDataset,
-  PlannerUser,
   ResolvedCalendarEvent,
   StatusTone,
 } from '../types/planner';
 import { addDays, sortEvents } from './calendar';
+export { getOrganizationBundle } from '../db/repository';
 
+/**
+ * Etiquetas legibles para cada estado del dominio.
+ */
 export const statusLabels: Record<EventStatus, string> = {
   pending: 'Pendiente',
   in_progress: 'En revisión',
@@ -18,6 +20,9 @@ export const statusLabels: Record<EventStatus, string> = {
   cancelled: 'Cancelado',
 };
 
+/**
+ * Mapeo entre estado de negocio y variante visual del badge.
+ */
 export const statusTone: Record<EventStatus, StatusTone> = {
   pending: 'warning',
   in_progress: 'info',
@@ -26,25 +31,26 @@ export const statusTone: Record<EventStatus, StatusTone> = {
   cancelled: 'muted',
 };
 
-export const getOrganizationBundle = (user: PlannerUser): PlannerDataset => {
-  const organization =
-    organizations.find((entry) => entry.id === user.organizationId) ?? organizations[0];
-
-  return {
-    organization,
-    users: users.filter((entry) => entry.organizationId === user.organizationId),
-    clients: clients.filter((entry) => entry.organizationId === user.organizationId),
-    eventTypes: eventTypes.filter((entry) => entry.organizationId === user.organizationId),
-    events: events.filter((entry) => entry.organizationId === user.organizationId),
-  };
-};
-
+/**
+ * Resuelve el color visible final de un evento.
+ *
+ * @param event Evento base.
+ * @param client Cliente asociado.
+ * @param typeColor Color por defecto del tipo de evento.
+ * @returns Color prioritario para pintar el evento.
+ */
 export const resolveEventColor = (
   event: CalendarEvent,
   client: Client,
   typeColor: string,
 ) => event.customColor || client.color || typeColor;
 
+/**
+ * Enriquece los eventos con relaciones y metadatos necesarios para la UI.
+ *
+ * @param dataset Dataset de una organizacion.
+ * @returns Eventos resueltos y listos para render.
+ */
 export const resolveEvents = (dataset: PlannerDataset): ResolvedCalendarEvent[] => {
   const clientMap = new Map(dataset.clients.map((client) => [client.id, client]));
   const typeMap = new Map(dataset.eventTypes.map((type) => [type.id, type]));
@@ -73,6 +79,9 @@ export const resolveEvents = (dataset: PlannerDataset): ResolvedCalendarEvent[] 
     }, []);
 };
 
+/**
+ * Filtros disponibles en la vista principal del calendario.
+ */
 export interface EventFilters {
   clientIds: string[];
   typeIds: string[];
@@ -80,6 +89,13 @@ export interface EventFilters {
   search?: string;
 }
 
+/**
+ * Aplica filtros combinados sobre una coleccion de eventos resueltos.
+ *
+ * @param items Eventos candidatos.
+ * @param filters Filtros activos en la UI.
+ * @returns Eventos que cumplen los filtros indicados.
+ */
 export const applyEventFilters = (
   items: ResolvedCalendarEvent[],
   filters: EventFilters,
@@ -118,6 +134,13 @@ export const applyEventFilters = (
   });
 };
 
+/**
+ * Calcula las metricas resumidas mostradas en el dashboard.
+ *
+ * @param items Eventos resueltos.
+ * @param baseDate Fecha de referencia para la ventana temporal.
+ * @returns Totales usados por la vista de resumen.
+ */
 export const getDashboardMetrics = (items: ResolvedCalendarEvent[], baseDate: Date) => {
   const weekEnd = addDays(baseDate, 7);
 
@@ -132,11 +155,26 @@ export const getDashboardMetrics = (items: ResolvedCalendarEvent[], baseDate: Da
   };
 };
 
+/**
+ * Obtiene los proximos eventos a partir de una fecha base.
+ *
+ * @param items Eventos resueltos.
+ * @param baseDate Fecha de corte inferior.
+ * @param limit Numero maximo de eventos a devolver.
+ * @returns Lista truncada de proximos eventos.
+ */
 export const getUpcomingEvents = (items: ResolvedCalendarEvent[], baseDate: Date, limit = 5) =>
   items
     .filter((event) => new Date(event.startsAt) >= baseDate)
     .slice(0, limit);
 
+/**
+ * Resume la carga semanal por cliente para la barra lateral.
+ *
+ * @param items Eventos resueltos.
+ * @param baseDate Inicio de la ventana semanal.
+ * @returns Totales y porcentajes por cliente.
+ */
 export const getWeeklyWorkload = (items: ResolvedCalendarEvent[], baseDate: Date) => {
   const weekEnd = addDays(baseDate, 7);
   const totals = new Map<string, number>();

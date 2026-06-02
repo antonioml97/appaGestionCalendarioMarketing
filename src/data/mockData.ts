@@ -8,6 +8,20 @@ import type {
 
 const createdAt = '2026-05-01T09:00:00';
 
+/**
+ * Nombre de usuario configurable para la cuenta demo principal.
+ */
+const demoUsername = import.meta.env.DEMO_USERNAME?.trim() || 'lily';
+
+/**
+ * Contrasena configurable para la cuenta demo principal.
+ */
+const demoPassword =
+  import.meta.env.DEMO_PASSWORD?.trim() || 'la_graciosa_con_culo_gordo';
+
+/**
+ * Organizaciones visibles en la demo.
+ */
 export const organizations: Organization[] = [
   {
     id: 'org_marketing-planner',
@@ -17,58 +31,31 @@ export const organizations: Organization[] = [
     createdAt,
     updatedAt: '2026-06-02T09:00:00',
   },
-  {
-    id: 'org_hidden',
-    name: 'Otra organización',
-    slug: 'otra-organizacion',
-    primaryColor: '#0f766e',
-    createdAt,
-    updatedAt: createdAt,
-  },
 ];
 
+/**
+ * Usuarios demo disponibles para autenticacion y autoria.
+ */
 export const users: PlannerUser[] = [
   {
-    id: 'usr_laura',
+    id: 'usr_lily',
     organizationId: 'org_marketing-planner',
-    name: 'Laura Martínez',
-    email: 'laura@planner.demo',
+    name: 'Lily',
+    username: demoUsername,
+    email: `${demoUsername}@planner.demo`,
     role: 'admin',
     active: true,
-    demoPassword: 'demo123',
-    title: 'Directora de cuentas',
+    demoPassword: demoPassword,
+    title: 'Administrador',
     avatarColor: '#4f46e5',
     createdAt,
     updatedAt: '2026-06-02T08:45:00',
   },
-  {
-    id: 'usr_diego',
-    organizationId: 'org_marketing-planner',
-    name: 'Diego Ramos',
-    email: 'diego@planner.demo',
-    role: 'manager',
-    active: true,
-    demoPassword: 'demo123',
-    title: 'Content strategist',
-    avatarColor: '#f97316',
-    createdAt,
-    updatedAt: createdAt,
-  },
-  {
-    id: 'usr_hidden',
-    organizationId: 'org_hidden',
-    name: 'Usuario oculto',
-    email: 'oculto@planner.demo',
-    role: 'admin',
-    active: true,
-    demoPassword: 'demo123',
-    title: 'Admin',
-    avatarColor: '#0891b2',
-    createdAt,
-    updatedAt: createdAt,
-  },
 ];
 
+/**
+ * Empresas gestionadas por la organizacion principal.
+ */
 export const clients: Client[] = [
   {
     id: 'cli_alba',
@@ -110,18 +97,11 @@ export const clients: Client[] = [
     createdAt,
     updatedAt: '2026-05-28T12:00:00',
   },
-  {
-    id: 'cli_hidden',
-    organizationId: 'org_hidden',
-    name: 'Cliente externo',
-    color: '#0ea5e9',
-    description: 'No debe verse en la demo.',
-    active: true,
-    createdAt,
-    updatedAt: createdAt,
-  },
 ];
 
+/**
+ * Tipos de evento que estructuran el calendario editorial.
+ */
 export const eventTypes: EventType[] = [
   {
     id: 'type_reel',
@@ -191,6 +171,9 @@ export const eventTypes: EventType[] = [
   },
 ];
 
+/**
+ * Agenda editorial demo usada por todas las vistas del calendario.
+ */
 export const events: CalendarEvent[] = [
   {
     id: 'evt_01',
@@ -202,8 +185,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-01T10:30:00',
     endsAt: '2026-06-01T11:15:00',
     status: 'in_progress',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: '2026-06-01T08:00:00',
   },
@@ -217,8 +200,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-02T11:00:00',
     endsAt: '2026-06-02T11:30:00',
     status: 'pending',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -232,8 +215,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-03T09:00:00',
     endsAt: '2026-06-03T12:00:00',
     status: 'pending',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -248,8 +231,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-05T10:00:00',
     endsAt: '2026-06-05T11:00:00',
     status: 'in_progress',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: '2026-06-02T09:10:00',
   },
@@ -263,8 +246,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-07T18:00:00',
     endsAt: '2026-06-07T18:20:00',
     status: 'pending',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -278,8 +261,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-09T16:00:00',
     endsAt: '2026-06-09T17:00:00',
     status: 'pending',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_diego',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -293,8 +276,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-10T12:30:00',
     endsAt: '2026-06-10T13:00:00',
     status: 'published',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: '2026-06-01T17:00:00',
   },
@@ -308,8 +291,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-11T11:30:00',
     endsAt: '2026-06-11T13:00:00',
     status: 'in_progress',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -323,8 +306,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-12T09:30:00',
     endsAt: '2026-06-12T10:15:00',
     status: 'completed',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -338,8 +321,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-14T10:30:00',
     endsAt: '2026-06-14T11:00:00',
     status: 'pending',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_diego',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -353,8 +336,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-15T17:00:00',
     endsAt: '2026-06-15T17:20:00',
     status: 'in_progress',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_diego',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -368,8 +351,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-16T11:00:00',
     endsAt: '2026-06-16T11:30:00',
     status: 'pending',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -383,8 +366,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-17T13:00:00',
     endsAt: '2026-06-17T14:00:00',
     status: 'pending',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -398,8 +381,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-19T09:00:00',
     endsAt: '2026-06-19T10:00:00',
     status: 'completed',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -413,8 +396,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-21T09:00:00',
     endsAt: '2026-06-21T11:00:00',
     status: 'pending',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_diego',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -428,8 +411,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-22T10:30:00',
     endsAt: '2026-06-22T11:00:00',
     status: 'in_progress',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -443,8 +426,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-23T12:00:00',
     endsAt: '2026-06-23T12:30:00',
     status: 'published',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -458,8 +441,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-24T18:00:00',
     endsAt: '2026-06-24T18:15:00',
     status: 'pending',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_diego',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -473,8 +456,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-25T16:00:00',
     endsAt: '2026-06-25T16:45:00',
     status: 'in_progress',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_diego',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -488,8 +471,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-26T10:00:00',
     endsAt: '2026-06-26T10:30:00',
     status: 'completed',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -503,8 +486,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-29T09:00:00',
     endsAt: '2026-06-29T11:00:00',
     status: 'pending',
-    responsibleUserId: 'usr_diego',
-    createdByUserId: 'usr_laura',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },
@@ -518,23 +501,8 @@ export const events: CalendarEvent[] = [
     startsAt: '2026-06-30T10:00:00',
     endsAt: '2026-06-30T10:45:00',
     status: 'pending',
-    responsibleUserId: 'usr_laura',
-    createdByUserId: 'usr_laura',
-    createdAt,
-    updatedAt: createdAt,
-  },
-  {
-    id: 'evt_hidden',
-    organizationId: 'org_hidden',
-    clientId: 'cli_hidden',
-    eventTypeId: 'type_post',
-    title: 'No visible',
-    description: 'Este evento prueba el aislamiento por organización.',
-    startsAt: '2026-06-04T09:00:00',
-    endsAt: '2026-06-04T09:30:00',
-    status: 'pending',
-    responsibleUserId: 'usr_hidden',
-    createdByUserId: 'usr_hidden',
+    responsibleUserId: 'usr_lily',
+    createdByUserId: 'usr_lily',
     createdAt,
     updatedAt: createdAt,
   },

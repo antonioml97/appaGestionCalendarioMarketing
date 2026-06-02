@@ -1,5 +1,11 @@
+/**
+ * Roles disponibles dentro del planner.
+ */
 export type UserRole = 'admin' | 'manager';
 
+/**
+ * Estados posibles para un evento del calendario.
+ */
 export type EventStatus =
   | 'pending'
   | 'in_progress'
@@ -7,33 +13,51 @@ export type EventStatus =
   | 'published'
   | 'cancelled';
 
+/**
+ * Vistas disponibles en la UI del calendario.
+ */
 export type CalendarView = 'month' | 'week' | 'day' | 'agenda';
+
+/**
+ * Variantes visuales usadas por los badges de estado.
+ */
 export type StatusTone = 'info' | 'warning' | 'success' | 'mint' | 'muted';
 
+/**
+ * Datos base de una organizacion dentro del entorno multi-tenant.
+ */
 export interface Organization {
   id: string;
   name: string;
   slug: string;
+  description?: string | null;
   logoUrl?: string | null;
   primaryColor: string;
   createdAt: string;
   updatedAt: string;
 }
 
+/**
+ * Usuario operativo del planner.
+ */
 export interface PlannerUser {
   id: string;
   organizationId: string;
   name: string;
+  username: string;
   email: string;
   role: UserRole;
   active: boolean;
-  demoPassword: string;
+  demoPassword?: string;
   title: string;
   avatarColor: string;
   createdAt: string;
   updatedAt: string;
 }
 
+/**
+ * Cliente o empresa asociada a una organizacion.
+ */
 export interface Client {
   id: string;
   organizationId: string;
@@ -45,6 +69,9 @@ export interface Client {
   updatedAt: string;
 }
 
+/**
+ * Categoria de evento representada con color e icono propios.
+ */
 export interface EventType {
   id: string;
   organizationId: string;
@@ -57,6 +84,9 @@ export interface EventType {
   updatedAt: string;
 }
 
+/**
+ * Registro base de un evento del calendario.
+ */
 export interface CalendarEvent {
   id: string;
   organizationId: string;
@@ -74,6 +104,9 @@ export interface CalendarEvent {
   updatedAt: string;
 }
 
+/**
+ * Conjunto completo de datos necesarios para renderizar la app de una organizacion.
+ */
 export interface PlannerDataset {
   organization: Organization;
   users: PlannerUser[];
@@ -82,6 +115,9 @@ export interface PlannerDataset {
   events: CalendarEvent[];
 }
 
+/**
+ * Identificadores de iconos soportados por el componente compartido de iconografia.
+ */
 export type PlannerIconName =
   | 'search'
   | 'plus'
@@ -110,6 +146,9 @@ export type PlannerIconName =
   | 'spark'
   | 'logout';
 
+/**
+ * Evento enriquecido con las relaciones necesarias para la UI.
+ */
 export interface ResolvedCalendarEvent extends CalendarEvent {
   client: Client;
   eventType: EventType;

@@ -3,6 +3,9 @@ import AppShell from '../components/AppShell.astro';
 import Icon from '../components/Icon.astro';
 import { getOrganizationBundle } from '../lib/planner';
 
+/**
+ * Ruta de preferencias de organizacion, branding y comportamiento del planner.
+ */
 const currentUser = Astro.locals.currentUser!;
 const dataset = getOrganizationBundle(currentUser);
 ---

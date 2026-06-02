@@ -5,6 +5,9 @@ import type { CalendarDayCell } from '../../lib/calendar';
 import type { ResolvedCalendarEvent } from '../../types/planner';
 import EventCard from './EventCard.astro';
 
+/**
+ * Props necesarias para renderizar la cuadricula mensual.
+ */
 interface Props {
   matrix: CalendarDayCell[][];
   eventsByDay: Map<string, ResolvedCalendarEvent[]>;
@@ -13,6 +16,10 @@ interface Props {
 }
 
 const { matrix, eventsByDay, selectedEventId, searchParams } = Astro.props;
+
+/**
+ * Etiquetas de cabecera derivadas de la primera fila de la matriz.
+ */
 const weekdays = matrix[0]?.map((cell) => capitalize(formatShortWeekday(cell.date).replace('.', ''))) ?? [];
 ---
 

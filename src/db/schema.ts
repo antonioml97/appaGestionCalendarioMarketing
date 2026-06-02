@@ -1,54 +1,48 @@
 import { relations } from 'drizzle-orm';
 import {
   boolean,
-  pgEnum,
   pgTable,
   text,
   timestamp,
-  uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-
-export const userRoleEnum = pgEnum('user_role', ['admin', 'manager']);
-export const eventStatusEnum = pgEnum('event_status', [
-  'pending',
-  'in_progress',
-  'completed',
-  'published',
-  'cancelled',
-]);
+import type { EventStatus, PlannerIconName, UserRole } from '../types/planner';
 
 const auditColumns = {
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: false }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: false }).defaultNow().notNull(),
 };
 
 export const organizations = pgTable('organizations', {
-  id: uuid('id').defaultRandom().primaryKey(),
+  id: varchar('id', { length: 64 }).primaryKey(),
   name: varchar('name', { length: 160 }).notNull(),
   slug: varchar('slug', { length: 160 }).notNull().unique(),
+  description: text('description'),
   logoUrl: text('logo_url'),
   primaryColor: varchar('primary_color', { length: 16 }).notNull(),
   ...auditColumns,
 });
 
 export const users = pgTable('users', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  organizationId: uuid('organization_id')
+  id: varchar('id', { length: 64 }).primaryKey(),
+  organizationId: varchar('organization_id', { length: 64 })
     .notNull()
     .references(() => organizations.id, { onDelete: 'cascade' }),
+  username: varchar('username', { length: 80 }).notNull().unique(),
   name: varchar('name', { length: 160 }).notNull(),
   email: varchar('email', { length: 200 }).notNull(),
   passwordHash: text('password_hash'),
   authProvider: varchar('auth_provider', { length: 48 }),
-  role: userRoleEnum('role').default('manager').notNull(),
+  role: varchar('role', { length: 32 }).$type<UserRole>().default('manager').notNull(),
+  title: varchar('title', { length: 160 }).default('Administrador').notNull(),
+  avatarColor: varchar('avatar_color', { length: 16 }).default('#4f46e5').notNull(),
   active: boolean('active').default(true).notNull(),
   ...auditColumns,
 });
 
 export const clients = pgTable('clients', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  organizationId: uuid('organization_id')
+  id: varchar('id', { length: 64 }).primaryKey(),
+  organizationId: varchar('organization_id', { length: 64 })
     .notNull()
     .references(() => organizations.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 160 }).notNull(),
@@ -59,39 +53,41 @@ export const clients = pgTable('clients', {
 });
 
 export const eventTypes = pgTable('event_types', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  organizationId: uuid('organization_id')
+  id: varchar('id', { length: 64 }).primaryKey(),
+  organizationId: varchar('organization_id', { length: 64 })
     .notNull()
     .references(() => organizations.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 120 }).notNull(),
   color: varchar('color', { length: 16 }).notNull(),
-  icon: varchar('icon', { length: 48 }).default('calendar').notNull(),
+  icon: varchar('icon', { length: 48 }).$type<PlannerIconName>().default('calendar').notNull(),
   description: text('description'),
   active: boolean('active').default(true).notNull(),
   ...auditColumns,
 });
 
 export const calendarEvents = pgTable('calendar_events', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  organizationId: uuid('organization_id')
+  id: varchar('id', { length: 64 }).primaryKey(),
+  organizationId: varchar('organization_id', { length: 64 })
     .notNull()
     .references(() => organizations.id, { onDelete: 'cascade' }),
-  clientId: uuid('client_id')
+  clientId: varchar('client_id', { length: 64 })
     .notNull()
-    .references(() => clients.id),
-  eventTypeId: uuid('event_type_id')
+    .references(() => clients.id, { onDelete: 'cascade' }),
+  eventTypeId: varchar('event_type_id', { length: 64 })
     .notNull()
-    .references(() => eventTypes.id),
+    .references(() => eventTypes.id, { onDelete: 'cascade' }),
   title: varchar('title', { length: 200 }).notNull(),
   description: text('description'),
-  startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
-  endsAt: timestamp('ends_at', { withTimezone: true }),
-  status: eventStatusEnum('status').default('pending').notNull(),
+  startsAt: timestamp('starts_at', { withTimezone: false }).notNull(),
+  endsAt: timestamp('ends_at', { withTimezone: false }),
+  status: varchar('status', { length: 32 }).$type<EventStatus>().default('pending').notNull(),
   customColor: varchar('custom_color', { length: 16 }),
-  responsibleUserId: uuid('responsible_user_id').references(() => users.id),
-  createdByUserId: uuid('created_by_user_id')
+  responsibleUserId: varchar('responsible_user_id', { length: 64 }).references(() => users.id, {
+    onDelete: 'set null',
+  }),
+  createdByUserId: varchar('created_by_user_id', { length: 64 })
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   ...auditColumns,
 });
 

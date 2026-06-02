@@ -1,6 +1,9 @@
 ---
 import type { PlannerIconName } from '../types/planner';
 
+/**
+ * Props del componente SVG reutilizable para iconografia del planner.
+ */
 interface Props {
   name: PlannerIconName;
   class?: string;
@@ -15,6 +18,9 @@ const {
   strokeWidth = 1.9,
 } = Astro.props;
 
+/**
+ * Mapa de iconos disponibles serializados como fragmentos SVG.
+ */
 const icons: Record<PlannerIconName, string> = {
   search: '<path d="m21 21-4.35-4.35"/><circle cx="11" cy="11" r="6"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
@@ -44,6 +50,9 @@ const icons: Record<PlannerIconName, string> = {
   logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
 };
 
+/**
+ * Fragmento SVG asociado al icono solicitado.
+ */
 const markup = icons[name];
 ---
 

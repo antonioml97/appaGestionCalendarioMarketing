@@ -5,6 +5,9 @@ import type { ResolvedCalendarEvent } from '../../types/planner';
 import Icon from '../Icon.astro';
 import StatusBadge from '../StatusBadge.astro';
 
+/**
+ * Props del panel lateral o flotante con el detalle del evento.
+ */
 interface Props {
   event?: ResolvedCalendarEvent;
   closeHref: string;

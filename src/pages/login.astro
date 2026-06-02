@@ -2,11 +2,24 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 
+/**
+ * Evita mostrar el login cuando ya existe una sesion valida.
+ */
 if (Astro.locals.currentUser) {
   return Astro.redirect('/calendar');
 }
 
+/**
+ * Codigo de error simple para pintar feedback del formulario.
+ */
 const error = Astro.url.searchParams.get('error');
+
+/**
+ * Credenciales demo visibles en la pantalla de acceso.
+ */
+const demoUsername = import.meta.env.DEMO_USERNAME?.trim() || 'lily';
+const demoPassword =
+  import.meta.env.DEMO_PASSWORD?.trim() || 'la_graciosa_con_culo_gordo';
 ---
 
 <BaseLayout title="Login | Marketing Planner">
@@ -70,17 +83,17 @@ const error = Astro.url.searchParams.get('error');
 
       {error && (
         <div class="mb-6 rounded-[24px] border border-rose-100 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
-          Credenciales no válidas. Usa uno de los accesos demo indicados abajo.
+          Credenciales no válidas. Usa el acceso admin configurado abajo.
         </div>
       )}
 
       <form method="POST" action="/api/login" class="space-y-5">
         <label class="block">
-          <span class="mb-2 block text-sm font-semibold text-slate-700">Email</span>
+          <span class="mb-2 block text-sm font-semibold text-slate-700">Usuario</span>
           <input
-            type="email"
-            name="email"
-            value="laura@planner.demo"
+            type="text"
+            name="username"
+            value={demoUsername}
             class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-800 outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
           />
         </label>
@@ -89,7 +102,7 @@ const error = Astro.url.searchParams.get('error');
           <input
             type="password"
             name="password"
-            value="demo123"
+            value={demoPassword}
             class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-800 outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
           />
         </label>
@@ -103,10 +116,7 @@ const error = Astro.url.searchParams.get('error');
         <p class="text-sm font-semibold text-slate-800">Credenciales disponibles</p>
         <div class="mt-4 grid gap-3">
           <div class="rounded-2xl border border-white bg-white px-4 py-3 text-sm text-slate-600">
-            <span class="font-semibold text-slate-900">Admin:</span> laura@planner.demo / demo123
-          </div>
-          <div class="rounded-2xl border border-white bg-white px-4 py-3 text-sm text-slate-600">
-            <span class="font-semibold text-slate-900">Gestor:</span> diego@planner.demo / demo123
+            <span class="font-semibold text-slate-900">Admin:</span> {demoUsername} / {demoPassword}
           </div>
         </div>
       </div>

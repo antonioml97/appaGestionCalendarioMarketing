@@ -1,12 +1,15 @@
 import type { APIRoute } from 'astro';
-import { authenticateDemoUser, SESSION_COOKIE } from '../../lib/session';
+import { authenticateUser, SESSION_COOKIE } from '../../lib/session';
 
+/**
+ * Procesa el login demo, persiste la cookie de sesion y redirige al calendario.
+ */
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const formData = await request.formData();
-  const email = String(formData.get('email') ?? '');
+  const username = String(formData.get('username') ?? '');
   const password = String(formData.get('password') ?? '');
 
-  const user = authenticateDemoUser(email, password);
+  const user = await authenticateUser(username, password);
 
   if (!user) {
     return redirect('/login?error=1');
