@@ -2,20 +2,17 @@
 import AppShell from '../components/AppShell.astro';
 import Icon from '../components/Icon.astro';
 import EventCard from '../components/planner/EventCard.astro';
+import { getOrganizationBundle } from '../db/repository';
 import { parseDateParam } from '../lib/calendar';
 import { formatMonthYear } from '../lib/format';
 import {
   getDashboardMetrics,
-  getOrganizationBundle,
   getUpcomingEvents,
   resolveEvents,
 } from '../lib/planner';
 
-/**
- * Ruta de resumen ejecutivo del calendario editorial.
- */
 const currentUser = Astro.locals.currentUser!;
-const dataset = getOrganizationBundle(currentUser);
+const dataset = await getOrganizationBundle(currentUser);
 const resolvedEvents = resolveEvents(dataset);
 const baseDate = parseDateParam(Astro.url.searchParams.get('date'));
 const metrics = getDashboardMetrics(resolvedEvents, baseDate);
@@ -36,10 +33,10 @@ const upcoming = getUpcomingEvents(resolvedEvents, baseDate, 6);
         <div>
           <p class="text-sm font-semibold uppercase tracking-[0.22em] text-white/65">Resumen del periodo</p>
           <h1 class="mt-4 font-display text-5xl leading-[1.02] font-semibold">
-            Todo el equipo ve qué sale, para quién y con qué carga.
+            Ya estás trabajando con datos persistentes de verdad.
           </h1>
           <p class="mt-5 max-w-2xl text-base leading-8 text-white/78">
-            La capa visual ya refleja el briefing: métricas rápidas, próximos eventos y un calendario editorial preparado para crecer con datos reales.
+            El panel ya lee de la base de datos real: clientes, tipos y calendario se actualizan al instante tras crear, editar o borrar.
           </p>
         </div>
         <div class="grid gap-4 sm:grid-cols-2">
@@ -61,51 +58,22 @@ const upcoming = getUpcomingEvents(resolvedEvents, baseDate, 6);
       </div>
     </article>
 
-    <div class="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-      <section class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
-        <div class="mb-5 flex items-center justify-between">
-          <div>
-            <p class="text-sm text-slate-500">Próximos eventos</p>
-            <h2 class="font-display text-3xl font-semibold text-slate-950">{formatMonthYear(baseDate)}</h2>
-          </div>
-          <a href="/calendar" class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
-            Ir al calendario
-            <Icon name="chevron-right" size={14} />
-          </a>
+    <section class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
+      <div class="mb-5 flex items-center justify-between">
+        <div>
+          <p class="text-sm text-slate-500">Próximos eventos</p>
+          <h2 class="font-display text-3xl font-semibold text-slate-950">{formatMonthYear(baseDate)}</h2>
         </div>
-        <div class="grid gap-4 md:grid-cols-2">
-          {upcoming.map((event) => (
-            <EventCard event={event} href={`/calendar?event=${event.id}`} mode="list" />
-          ))}
-        </div>
-      </section>
-
-      <section class="space-y-6">
-        <div class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
-          <p class="text-sm text-slate-500">Ritmo del equipo</p>
-          <h2 class="mt-2 font-display text-3xl font-semibold text-slate-950">Qué está pasando ahora</h2>
-          <div class="mt-6 space-y-4">
-            {[
-              { label: 'Calendario listo para vista mensual, semanal y diaria', tone: 'from-violet-500 to-indigo-500' },
-              { label: 'Filtros combinados por empresa, tipo y estado', tone: 'from-emerald-500 to-teal-500' },
-              { label: 'Modelo de datos multi-tenant ya reflejado en schema y mocks', tone: 'from-amber-500 to-orange-500' },
-            ].map((item) => (
-              <div class="flex items-start gap-4 rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
-                <div class:list={['mt-1 h-3 w-3 rounded-full bg-gradient-to-r', item.tone]} />
-                <p class="text-sm leading-7 text-slate-600">{item.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
-          <p class="text-sm text-slate-500">Siguiente paso natural</p>
-          <h2 class="mt-2 font-display text-3xl font-semibold text-slate-950">Conectar persistencia real</h2>
-          <p class="mt-4 text-sm leading-7 text-slate-600">
-            La estructura ya deja lista la migración a Netlify Database con Drizzle, login real y CRUD persistente sin rehacer la UI.
-          </p>
-        </div>
-      </section>
-    </div>
+        <a href="/calendar" class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
+          Ir al calendario
+          <Icon name="chevron-right" size={14} />
+        </a>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {upcoming.map((event) => (
+          <EventCard event={event} href={`/calendar?event=${event.id}`} mode="list" />
+        ))}
+      </div>
+    </section>
   </section>
 </AppShell>

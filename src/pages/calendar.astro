@@ -8,6 +8,7 @@ import MonthlyCalendar from '../components/planner/MonthlyCalendar.astro';
 import SidebarFilters from '../components/planner/SidebarFilters.astro';
 import WeekCalendar from '../components/planner/WeekCalendar.astro';
 import DayTimeline from '../components/planner/DayTimeline.astro';
+import { getOrganizationBundle } from '../db/repository';
 import {
   addDays,
   addMonths,
@@ -22,24 +23,17 @@ import {
 import { capitalize, formatMonthYear } from '../lib/format';
 import {
   applyEventFilters,
-  getOrganizationBundle,
   getWeeklyWorkload,
   resolveEvents,
 } from '../lib/planner';
 import { buildHref } from '../lib/url';
 import type { CalendarView, EventStatus } from '../types/planner';
 
-/**
- * Ruta principal del planner con filtros, navegacion temporal y detalle de evento.
- */
 const currentUser = Astro.locals.currentUser!;
-const dataset = getOrganizationBundle(currentUser);
+const dataset = await getOrganizationBundle(currentUser);
 const resolvedEvents = resolveEvents(dataset);
 const searchParams = Astro.url.searchParams;
 
-/**
- * Vistas soportadas por el calendario.
- */
 const validViews: CalendarView[] = ['month', 'week', 'day', 'agenda'];
 const view = validViews.includes(searchParams.get('view') as CalendarView)
   ? (searchParams.get('view') as CalendarView)
@@ -93,9 +87,15 @@ const previousDate =
 const nextDate =
   view === 'month' ? addMonths(focusDate, 1) : view === 'week' ? addDays(focusDate, 7) : addDays(focusDate, 1);
 
-const clearEventHref = buildHref('/calendar', searchParams, { event: null });
+const clearEventHref = buildHref('/calendar', searchParams, { event: null, modal: null });
 const closeModalHref = buildHref('/calendar', searchParams, { modal: null });
-
+const eventEditHref = selectedEvent
+  ? buildHref('/calendar', searchParams, { modal: 'edit-event', event: selectedEvent.id })
+  : '#';
+const redirectTo = buildHref('/calendar', searchParams, { modal: null });
+const showEventModal =
+  modal === 'new-event' || (modal === 'edit-event' && Boolean(selectedEvent));
+const modalEvent = modal === 'edit-event' ? selectedEvent : undefined;
 ---
 
 <AppShell title="Calendario | Marketing Planner" currentPath="/calendar" currentUser={currentUser} organization={dataset.organization}>
@@ -136,7 +136,13 @@ const closeModalHref = buildHref('/calendar', searchParams, { modal: null });
 
     {selectedEvent && (
       <div class="fixed inset-x-0 bottom-24 z-40 px-4">
-        <EventDetailPanel event={selectedEvent} closeHref={clearEventHref} mobile />
+        <EventDetailPanel
+          event={selectedEvent}
+          closeHref={clearEventHref}
+          editHref={eventEditHref}
+          redirectTo={redirectTo}
+          mobile
+        />
       </div>
     )}
   </section>
@@ -243,10 +249,23 @@ const closeModalHref = buildHref('/calendar', searchParams, { modal: null });
       </div>
 
       <div class="hidden xl:block">
-        <EventDetailPanel event={selectedEvent} closeHref={clearEventHref} />
+        <EventDetailPanel
+          event={selectedEvent}
+          closeHref={clearEventHref}
+          editHref={eventEditHref}
+          redirectTo={redirectTo}
+        />
       </div>
     </div>
   </section>
 
-  <EventFormModal open={modal === 'new-event'} closeHref={closeModalHref} clients={dataset.clients} eventTypes={dataset.eventTypes} />
+  <EventFormModal
+    open={showEventModal}
+    closeHref={closeModalHref}
+    clients={dataset.clients.filter((client) => client.active)}
+    eventTypes={dataset.eventTypes.filter((type) => type.active)}
+    currentUser={currentUser}
+    event={modalEvent}
+    redirectTo={redirectTo}
+  />
 </AppShell>

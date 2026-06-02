@@ -31,6 +31,10 @@ const createDb = async (): Promise<PlannerDb> => {
     return drizzleNeon({ client }) as unknown as PlannerDb;
   }
 
+  if (import.meta.env.PROD) {
+    throw new Error('DATABASE_URL no está configurada. Configúrala en Netlify para usar la base de datos en producción.');
+  }
+
   const dataDir = join(process.cwd(), '.data');
   await mkdir(dataDir, { recursive: true });
   const client = new PGlite(join(dataDir, 'marketing-planner-db'));
@@ -122,8 +126,14 @@ const seedDatabase = async (db: PlannerDb) => {
   if (!total) {
     await db.insert(organizations).values(
       seedOrganizations.map((organization) => ({
-        ...organization,
+        id: organization.id,
+        name: organization.name,
+        slug: organization.slug,
         description: organization.description ?? null,
+        logoUrl: organization.logoUrl ?? null,
+        primaryColor: organization.primaryColor,
+        createdAt: normalizeDate(organization.createdAt),
+        updatedAt: normalizeDate(organization.updatedAt),
       })),
     );
 

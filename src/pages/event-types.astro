@@ -2,33 +2,117 @@
 import AppShell from '../components/AppShell.astro';
 import Icon from '../components/Icon.astro';
 import StatusBadge from '../components/StatusBadge.astro';
+import { getOrganizationBundle } from '../db/repository';
 import { hexToRgba } from '../lib/format';
-import { getOrganizationBundle, resolveEvents } from '../lib/planner';
+import { resolveEvents } from '../lib/planner';
+import type { PlannerIconName } from '../types/planner';
 
-/**
- * Ruta para visualizar y administrar tipologias de eventos.
- */
 const currentUser = Astro.locals.currentUser!;
-const dataset = getOrganizationBundle(currentUser);
+const dataset = await getOrganizationBundle(currentUser);
 const resolvedEvents = resolveEvents(dataset);
+const editId = Astro.url.searchParams.get('edit');
+const editingType = dataset.eventTypes.find((type) => type.id === editId);
+const availableIcons: PlannerIconName[] = ['reel', 'post', 'video', 'story', 'campaign', 'meeting', 'calendar', 'spark'];
 ---
 
 <AppShell title="Tipos de evento | Marketing Planner" currentPath="/event-types" currentUser={currentUser} organization={dataset.organization}>
   <section class="grid gap-6">
-    <div class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
-      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p class="text-sm text-slate-500">Catálogo operativo</p>
-          <h1 class="mt-2 font-display text-4xl font-semibold text-slate-950">Tipos de evento</h1>
-          <p class="mt-3 max-w-2xl text-base leading-8 text-slate-600">
-            El sistema visual separa empresa, tipo y estado para que el calendario se lea rápido incluso con mucha densidad de contenido.
-          </p>
+    <div class="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+      <article class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
+        <p class="text-sm text-slate-500">CRUD real de tipos</p>
+        <h1 class="mt-2 font-display text-4xl font-semibold text-slate-950">
+          {editingType ? 'Editar tipo de evento' : 'Nuevo tipo de evento'}
+        </h1>
+        <p class="mt-3 max-w-2xl text-base leading-8 text-slate-600">
+          Aquí puedes crear, editar o borrar categorías del calendario. El borrado también elimina sus eventos asociados.
+        </p>
+
+        <form method="POST" action="/api/event-types" class="mt-8 space-y-5">
+          <input type="hidden" name="_action" value="save" />
+          <input type="hidden" name="redirectTo" value="/event-types" />
+          {editingType && <input type="hidden" name="id" value={editingType.id} />}
+
+          <label class="block">
+            <span class="mb-2 block text-sm font-semibold text-slate-700">Nombre</span>
+            <input
+              name="name"
+              required
+              value={editingType?.name ?? ''}
+              class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
+            />
+          </label>
+
+          <div class="grid gap-5 md:grid-cols-2">
+            <label class="block">
+              <span class="mb-2 block text-sm font-semibold text-slate-700">Color</span>
+              <input
+                type="color"
+                name="color"
+                value={editingType?.color ?? '#4f46e5'}
+                class="h-14 w-full rounded-[22px] border border-slate-200 bg-white px-2 py-2"
+              />
+            </label>
+
+            <label class="block">
+              <span class="mb-2 block text-sm font-semibold text-slate-700">Icono</span>
+              <select
+                name="icon"
+                class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
+              >
+                {availableIcons.map((iconName) => (
+                  <option value={iconName} selected={editingType?.icon === iconName || (!editingType && iconName === 'calendar')}>
+                    {iconName}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <label class="block">
+            <span class="mb-2 block text-sm font-semibold text-slate-700">Descripción</span>
+            <textarea
+              name="description"
+              class="min-h-32 w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
+            >{editingType?.description ?? ''}</textarea>
+          </label>
+
+          <label class="flex items-center gap-3 rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-700">
+            <input type="checkbox" name="active" checked={editingType ? editingType.active : true} />
+            Tipo activo
+          </label>
+
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <button class="inline-flex items-center justify-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
+              <Icon name="edit" size={16} />
+              {editingType ? 'Guardar cambios' : 'Crear tipo'}
+            </button>
+            {editingType && (
+              <a href="/event-types" class="inline-flex items-center justify-center rounded-[22px] border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                Cancelar edición
+              </a>
+            )}
+          </div>
+        </form>
+      </article>
+
+      <article class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
+        <p class="text-sm text-slate-500">Resumen operativo</p>
+        <h2 class="mt-2 font-display text-4xl font-semibold text-slate-950">Tipos disponibles</h2>
+        <div class="mt-6 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+            <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Total</p>
+            <p class="mt-2 text-3xl font-semibold text-slate-900">{dataset.eventTypes.length}</p>
+          </div>
+          <div class="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+            <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Activos</p>
+            <p class="mt-2 text-3xl font-semibold text-slate-900">{dataset.eventTypes.filter((type) => type.active).length}</p>
+          </div>
+          <div class="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+            <p class="text-xs uppercase tracking-[0.16em] text-slate-400">Eventos</p>
+            <p class="mt-2 text-3xl font-semibold text-slate-900">{dataset.events.length}</p>
+          </div>
         </div>
-        <button class="inline-flex items-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
-          <Icon name="plus" size={16} />
-          Nuevo tipo
-        </button>
-      </div>
+      </article>
     </div>
 
     <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -47,7 +131,7 @@ const resolvedEvents = resolveEvents(dataset);
             </div>
 
             <h2 class="mt-5 font-display text-3xl font-semibold text-slate-950">{type.name}</h2>
-            <p class="mt-3 text-sm leading-7 text-slate-500">{type.description}</p>
+            <p class="mt-3 text-sm leading-7 text-slate-500">{type.description || 'Sin descripción.'}</p>
 
             <div class="mt-6 flex items-end justify-between">
               <div>
@@ -62,15 +146,24 @@ const resolvedEvents = resolveEvents(dataset);
               </span>
             </div>
 
-            <div class="mt-6 flex gap-3">
-              <button class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a href={`/event-types?edit=${type.id}`} class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
                 <Icon name="edit" size={14} />
                 Editar
-              </button>
+              </a>
               <a href={`/calendar?type=${type.id}`} class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
                 Ver eventos
                 <Icon name="chevron-right" size={14} />
               </a>
+              <form method="POST" action="/api/event-types" onsubmit="return confirm('¿Seguro que quieres borrar este tipo y sus eventos asociados?');">
+                <input type="hidden" name="_action" value="delete" />
+                <input type="hidden" name="id" value={type.id} />
+                <input type="hidden" name="redirectTo" value="/event-types" />
+                <button class="inline-flex items-center gap-2 rounded-full border border-rose-200 px-4 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50">
+                  <Icon name="trash" size={14} />
+                  Borrar
+                </button>
+              </form>
             </div>
           </article>
         );

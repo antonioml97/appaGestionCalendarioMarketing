@@ -1,47 +1,50 @@
 ---
 import AppShell from '../components/AppShell.astro';
 import Icon from '../components/Icon.astro';
-import { getOrganizationBundle } from '../lib/planner';
+import { getOrganizationBundle } from '../db/repository';
 
-/**
- * Ruta de preferencias de organizacion, branding y comportamiento del planner.
- */
 const currentUser = Astro.locals.currentUser!;
-const dataset = getOrganizationBundle(currentUser);
+const dataset = await getOrganizationBundle(currentUser);
 ---
 
 <AppShell title="Ajustes | Marketing Planner" currentPath="/settings" currentUser={currentUser} organization={dataset.organization}>
   <section class="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-    <article class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
+    <form method="POST" action="/api/settings" class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
       <p class="text-sm text-slate-500">Configuración general</p>
       <h1 class="mt-2 font-display text-4xl font-semibold text-slate-950">Ajustes de la organización</h1>
       <p class="mt-4 text-base leading-8 text-slate-600">
-        He dejado esta pantalla orientada a branding, preferencias de calendario y reglas de trabajo. Es el lugar natural para conectar autenticación real, permisos y preferencias persistentes.
+        Esta pantalla ya guarda datos reales de la organización principal del planner.
       </p>
 
       <div class="mt-8 space-y-6">
         <label class="block">
           <span class="mb-2 block text-sm font-semibold text-slate-700">Nombre de la organización</span>
-          <input value={dataset.organization.name} class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50" />
+          <input name="name" value={dataset.organization.name} class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50" />
         </label>
         <label class="block">
           <span class="mb-2 block text-sm font-semibold text-slate-700">Slug</span>
-          <input value={dataset.organization.slug} class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50" />
+          <input name="slug" value={dataset.organization.slug} class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50" />
         </label>
-        <div>
+        <label class="block">
           <span class="mb-2 block text-sm font-semibold text-slate-700">Color principal</span>
-          <div class="flex gap-3">
-            {['#4f46e5', '#0f766e', '#f97316', '#ec4899', '#0f172a'].map((swatch, index) => (
-              <span class:list={['h-10 w-10 rounded-full border-4', index === 0 ? 'border-white shadow-lg ring-2 ring-slate-200' : 'border-transparent']} style={`background:${swatch};`} />
-            ))}
-          </div>
-        </div>
+          <input
+            type="color"
+            name="primaryColor"
+            value={dataset.organization.primaryColor}
+            class="h-14 w-full rounded-[22px] border border-slate-200 bg-white px-2 py-2"
+          />
+        </label>
         <label class="block">
           <span class="mb-2 block text-sm font-semibold text-slate-700">Descripción breve</span>
-          <textarea class="min-h-32 w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50">Planificador editorial para equipos de marketing con foco en claridad visual y operación multiempresa.</textarea>
+          <textarea name="description" class="min-h-32 w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50">{dataset.organization.description || 'Planificador editorial para equipos de marketing con foco en claridad visual y operación multiempresa.'}</textarea>
         </label>
       </div>
-    </article>
+
+      <button class="mt-6 inline-flex items-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
+        <Icon name="edit" size={16} />
+        Guardar organización
+      </button>
+    </form>
 
     <div class="space-y-6">
       <article class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
@@ -50,33 +53,21 @@ const dataset = getOrganizationBundle(currentUser);
             <Icon name="calendar" size={22} />
           </div>
           <div>
-            <h2 class="font-display text-3xl font-semibold text-slate-950">Preferencias del calendario</h2>
-            <p class="mt-2 text-sm leading-7 text-slate-500">Qué vista mostrar primero, uso de colores y acciones rápidas.</p>
+            <h2 class="font-display text-3xl font-semibold text-slate-950">Persistencia activa</h2>
+            <p class="mt-2 text-sm leading-7 text-slate-500">Ya no estás en una maqueta: los cambios viven en la base de datos.</p>
           </div>
         </div>
 
         <div class="mt-6 space-y-5">
-          <label class="flex items-center justify-between rounded-[24px] border border-slate-100 bg-slate-50/70 px-4 py-4">
-            <span>
-              <p class="text-sm font-semibold text-slate-800">Vista inicial móvil</p>
-              <p class="text-sm text-slate-500">Recomendado: Agenda</p>
-            </span>
-            <span class="rounded-full bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700">Agenda</span>
-          </label>
-          <label class="flex items-center justify-between rounded-[24px] border border-slate-100 bg-slate-50/70 px-4 py-4">
-            <span>
-              <p class="text-sm font-semibold text-slate-800">Usar color de empresa como color principal</p>
-              <p class="text-sm text-slate-500">Prioridad: evento &gt; empresa &gt; tipo</p>
-            </span>
-            <span class="rounded-full bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">Activo</span>
-          </label>
-          <label class="flex items-center justify-between rounded-[24px] border border-slate-100 bg-slate-50/70 px-4 py-4">
-            <span>
-              <p class="text-sm font-semibold text-slate-800">Mostrar carga semanal en sidebar</p>
-              <p class="text-sm text-slate-500">Ayuda a balancear clientes y entregas.</p>
-            </span>
-            <span class="rounded-full bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">Activo</span>
-          </label>
+          {[
+            'Clientes, tipos y eventos se guardan de forma persistente.',
+            'El usuario admin se sincroniza desde `.env` al iniciar la app.',
+            'Los borrados de empresas y tipos eliminan sus eventos asociados.',
+          ].map((copy) => (
+            <div class="rounded-[24px] border border-slate-100 bg-slate-50/70 px-4 py-4 text-sm leading-7 text-slate-600">
+              {copy}
+            </div>
+          ))}
         </div>
       </article>
 
@@ -86,27 +77,16 @@ const dataset = getOrganizationBundle(currentUser);
             <Icon name="user" size={22} />
           </div>
           <div>
-            <h2 class="font-display text-3xl font-semibold text-slate-950">Roles y acceso</h2>
-            <p class="mt-2 text-sm leading-7 text-slate-500">La base ya contempla administrador y gestor, lista para auth real.</p>
+            <h2 class="font-display text-3xl font-semibold text-slate-950">Usuario activo</h2>
+            <p class="mt-2 text-sm leading-7 text-slate-500">De momento solo hay un admin operativo, como pediste.</p>
           </div>
         </div>
 
-        <div class="mt-6 grid gap-4">
-          {[
-            { name: 'Administrador', detail: 'Gestiona organización, clientes, tipos y eventos.' },
-            { name: 'Gestor', detail: 'Opera el calendario y mantiene la producción.' },
-          ].map((role) => (
-            <div class="rounded-[24px] border border-slate-100 bg-slate-50/70 px-4 py-4">
-              <p class="text-sm font-semibold text-slate-800">{role.name}</p>
-              <p class="mt-2 text-sm leading-7 text-slate-500">{role.detail}</p>
-            </div>
-          ))}
+        <div class="mt-6 rounded-[24px] border border-slate-100 bg-slate-50/70 px-4 py-4">
+          <p class="text-sm font-semibold text-slate-800">{currentUser.name}</p>
+          <p class="mt-2 text-sm text-slate-500">Usuario: {currentUser.username}</p>
+          <p class="mt-1 text-sm text-slate-500">Rol: {currentUser.role}</p>
         </div>
-
-        <button class="mt-6 inline-flex items-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
-          <Icon name="edit" size={16} />
-          Guardar preferencias
-        </button>
       </article>
     </div>
   </section>
