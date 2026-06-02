@@ -17,6 +17,7 @@ declare global {
 interface ImportMetaEnv {
   readonly DEMO_USERNAME?: string;
   readonly DEMO_PASSWORD?: string;
+  readonly DATABASE_URL?: string;
 }
 
 export {};

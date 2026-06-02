@@ -13,6 +13,8 @@ interface Props {
 }
 
 const { open, closeHref, clients, eventTypes, currentUser, event, redirectTo } = Astro.props;
+const selectedClient =
+  clients.find((client) => client.id === event?.clientId) ?? clients[0];
 
 const toDateTimeLocal = (value?: string) => {
   if (!value) return '';
@@ -75,12 +77,18 @@ const canCreateEvent = clients.length > 0 && eventTypes.length > 0;
                 <label class="block">
                   <span class="mb-2 block text-sm font-semibold text-slate-700">Empresa</span>
                   <select
+                    id="event-client-select"
                     name="clientId"
                     required
                     class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
                   >
                     {clients.map((client) => (
-                      <option value={client.id} selected={event?.clientId === client.id}>
+                      <option
+                        value={client.id}
+                        selected={event?.clientId === client.id || (!event && selectedClient?.id === client.id)}
+                        data-client-color={client.color}
+                        data-client-name={client.name}
+                      >
                         {client.name}
                       </option>
                     ))}
@@ -170,13 +178,22 @@ const canCreateEvent = clients.length > 0 && eventTypes.length > 0;
                   />
                 </label>
                 <label class="block">
-                  <span class="mb-2 block text-sm font-semibold text-slate-700">Color personalizado</span>
-                  <input
-                    type="color"
-                    name="customColor"
-                    value={event?.customColor ?? '#4f46e5'}
-                    class="h-12 w-full rounded-2xl border border-slate-200 bg-white px-2 py-2"
-                  />
+                  <span class="mb-2 block text-sm font-semibold text-slate-700">Color del evento</span>
+                  <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                    <div class="flex items-center gap-3">
+                      <span
+                        id="event-client-color-preview"
+                        class="h-8 w-8 rounded-full border-4 border-white shadow ring-1 ring-slate-200"
+                        style={`background:${selectedClient?.color ?? '#4f46e5'};`}
+                      />
+                      <div>
+                        <p class="text-sm font-semibold text-slate-800">Heredado de la empresa</p>
+                        <p id="event-client-color-label" class="text-xs text-slate-500">
+                          {selectedClient ? `${selectedClient.name} · ${selectedClient.color}` : 'Selecciona una empresa'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </label>
               </div>
             </section>
@@ -196,3 +213,33 @@ const canCreateEvent = clients.length > 0 && eventTypes.length > 0;
     </div>
   )
 }
+
+<script>
+  const clientSelect = document.querySelector('#event-client-select');
+  const preview = document.querySelector('#event-client-color-preview');
+  const label = document.querySelector('#event-client-color-label');
+
+  const syncClientColor = () => {
+    if (
+      !(clientSelect instanceof HTMLSelectElement) ||
+      !(preview instanceof HTMLElement) ||
+      !(label instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const selectedOption = clientSelect.selectedOptions[0];
+    const color = selectedOption?.dataset.clientColor;
+    const name = selectedOption?.dataset.clientName;
+
+    if (!color || !name) {
+      return;
+    }
+
+    preview.style.background = color;
+    label.textContent = `${name} · ${color}`;
+  };
+
+  syncClientColor();
+  clientSelect?.addEventListener('change', syncClientColor);
+</script>

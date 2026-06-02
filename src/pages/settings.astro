@@ -10,15 +10,15 @@ const dataset = await getOrganizationBundle(currentUser);
 <AppShell title="Ajustes | Marketing Planner" currentPath="/settings" currentUser={currentUser} organization={dataset.organization}>
   <section class="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
     <form method="POST" action="/api/settings" class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
-      <p class="text-sm text-slate-500">Configuración general</p>
-      <h1 class="mt-2 font-display text-4xl font-semibold text-slate-950">Ajustes de la organización</h1>
+      <p class="text-sm text-slate-500">Configuracion general</p>
+      <h1 class="mt-2 font-display text-4xl font-semibold text-slate-950">Ajustes de la organizacion</h1>
       <p class="mt-4 text-base leading-8 text-slate-600">
-        Esta pantalla ya guarda datos reales de la organización principal del planner.
+        Esta pantalla ya guarda datos reales de la organizacion principal del planner.
       </p>
 
       <div class="mt-8 space-y-6">
         <label class="block">
-          <span class="mb-2 block text-sm font-semibold text-slate-700">Nombre de la organización</span>
+          <span class="mb-2 block text-sm font-semibold text-slate-700">Nombre de la organizacion</span>
           <input name="name" value={dataset.organization.name} class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50" />
         </label>
         <label class="block">
@@ -35,14 +35,14 @@ const dataset = await getOrganizationBundle(currentUser);
           />
         </label>
         <label class="block">
-          <span class="mb-2 block text-sm font-semibold text-slate-700">Descripción breve</span>
-          <textarea name="description" class="min-h-32 w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50">{dataset.organization.description || 'Planificador editorial para equipos de marketing con foco en claridad visual y operación multiempresa.'}</textarea>
+          <span class="mb-2 block text-sm font-semibold text-slate-700">Descripcion breve</span>
+          <textarea name="description" class="min-h-32 w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50">{dataset.organization.description || 'Planificador editorial para equipos de marketing con foco en claridad visual y operacion multiempresa.'}</textarea>
         </label>
       </div>
 
       <button class="mt-6 inline-flex items-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
         <Icon name="edit" size={16} />
-        Guardar organización
+        Guardar organizacion
       </button>
     </form>
 
@@ -54,14 +54,14 @@ const dataset = await getOrganizationBundle(currentUser);
           </div>
           <div>
             <h2 class="font-display text-3xl font-semibold text-slate-950">Persistencia activa</h2>
-            <p class="mt-2 text-sm leading-7 text-slate-500">Ya no estás en una maqueta: los cambios viven en la base de datos.</p>
+            <p class="mt-2 text-sm leading-7 text-slate-500">Los cambios se guardan directamente en la base de datos configurada para la aplicacion.</p>
           </div>
         </div>
 
         <div class="mt-6 space-y-5">
           {[
             'Clientes, tipos y eventos se guardan de forma persistente.',
-            'El usuario admin se sincroniza desde `.env` al iniciar la app.',
+            'El usuario admin se sincroniza desde las variables de entorno al iniciar la app.',
             'Los borrados de empresas y tipos eliminan sus eventos asociados.',
           ].map((copy) => (
             <div class="rounded-[24px] border border-slate-100 bg-slate-50/70 px-4 py-4 text-sm leading-7 text-slate-600">
@@ -78,7 +78,7 @@ const dataset = await getOrganizationBundle(currentUser);
           </div>
           <div>
             <h2 class="font-display text-3xl font-semibold text-slate-950">Usuario activo</h2>
-            <p class="mt-2 text-sm leading-7 text-slate-500">De momento solo hay un admin operativo, como pediste.</p>
+            <p class="mt-2 text-sm leading-7 text-slate-500">De momento solo hay un admin operativo.</p>
           </div>
         </div>
 

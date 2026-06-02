@@ -5,11 +5,7 @@ import EventCard from '../components/planner/EventCard.astro';
 import { getOrganizationBundle } from '../db/repository';
 import { parseDateParam } from '../lib/calendar';
 import { formatMonthYear } from '../lib/format';
-import {
-  getDashboardMetrics,
-  getUpcomingEvents,
-  resolveEvents,
-} from '../lib/planner';
+import { getDashboardMetrics, getUpcomingEvents, resolveEvents } from '../lib/planner';
 
 const currentUser = Astro.locals.currentUser!;
 const dataset = await getOrganizationBundle(currentUser);
@@ -19,7 +15,12 @@ const metrics = getDashboardMetrics(resolvedEvents, baseDate);
 const upcoming = getUpcomingEvents(resolvedEvents, baseDate, 6);
 ---
 
-<AppShell title="Dashboard | Marketing Planner" currentPath="/dashboard" currentUser={currentUser} organization={dataset.organization}>
+<AppShell
+  title="Dashboard | Marketing Planner"
+  currentPath="/dashboard"
+  currentUser={currentUser}
+  organization={dataset.organization}
+>
   <section class="mb-4 md:hidden">
     <div class="rounded-[28px] border border-white/80 bg-white/90 px-5 py-5 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
       <p class="text-sm text-slate-500">Dashboard</p>
@@ -31,17 +32,11 @@ const upcoming = getUpcomingEvents(resolvedEvents, baseDate, 6);
     <article class="rounded-[36px] border border-white/80 bg-[linear-gradient(135deg,_rgba(49,46,129,0.98),_rgba(79,70,229,0.96)_60%,_rgba(124,58,237,0.92))] p-6 text-white shadow-[0_40px_120px_-44px_rgba(79,70,229,0.5)] lg:p-8">
       <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
         <div>
-          <p class="text-sm font-semibold uppercase tracking-[0.22em] text-white/65">Resumen del periodo</p>
-          <h1 class="mt-4 font-display text-5xl leading-[1.02] font-semibold">
-            Ya estás trabajando con datos persistentes de verdad.
-          </h1>
-          <p class="mt-5 max-w-2xl text-base leading-8 text-white/78">
-            El panel ya lee de la base de datos real: clientes, tipos y calendario se actualizan al instante tras crear, editar o borrar.
-          </p>
+          <h1 class="font-display text-5xl leading-[1.02] font-semibold">Vista general</h1>
         </div>
         <div class="grid gap-4 sm:grid-cols-2">
           {[
-            { label: 'Eventos próximos 7 días', value: metrics.weekTotal, icon: 'calendar' as const },
+            { label: 'Eventos proximos 7 dias', value: metrics.weekTotal, icon: 'calendar' as const },
             { label: 'Pendientes', value: metrics.pendingTotal, icon: 'clock' as const },
             { label: 'Publicados', value: metrics.publishedTotal, icon: 'publish' as const },
             { label: 'Empresas activas', value: metrics.activeClients, icon: 'company' as const },
@@ -61,10 +56,15 @@ const upcoming = getUpcomingEvents(resolvedEvents, baseDate, 6);
     <section class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
       <div class="mb-5 flex items-center justify-between">
         <div>
-          <p class="text-sm text-slate-500">Próximos eventos</p>
-          <h2 class="font-display text-3xl font-semibold text-slate-950">{formatMonthYear(baseDate)}</h2>
+          <p class="text-sm text-slate-500">Proximos eventos</p>
+          <h2 class="font-display text-3xl font-semibold text-slate-950">
+            {formatMonthYear(baseDate)}
+          </h2>
         </div>
-        <a href="/calendar" class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
+        <a
+          href="/calendar"
+          class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700"
+        >
           Ir al calendario
           <Icon name="chevron-right" size={14} />
         </a>

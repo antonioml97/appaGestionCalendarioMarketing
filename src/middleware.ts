@@ -25,7 +25,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
-  const sessionUser = await findUserById(context.cookies.get(SESSION_COOKIE)?.value);
+  let sessionUser;
+
+  try {
+    sessionUser = await findUserById(context.cookies.get(SESSION_COOKIE)?.value);
+  } catch (error) {
+    console.error('[auth] No se pudo resolver la sesion actual.', error);
+    context.cookies.delete(SESSION_COOKIE, { path: '/' });
+    return context.redirect('/login?error=server');
+  }
 
   if (!sessionUser && pathname !== '/') {
     return context.redirect('/login');

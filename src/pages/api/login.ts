@@ -9,7 +9,14 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const username = String(formData.get('username') ?? '');
   const password = String(formData.get('password') ?? '');
 
-  const user = await authenticateUser(username, password);
+  let user;
+
+  try {
+    user = await authenticateUser(username, password);
+  } catch (error) {
+    console.error('[auth] Error al autenticar usuario.', error);
+    return redirect('/login?error=server');
+  }
 
   if (!user) {
     return redirect('/login?error=1');

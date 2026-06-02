@@ -17,9 +17,11 @@ const error = Astro.url.searchParams.get('error');
 /**
  * Credenciales demo visibles en la pantalla de acceso.
  */
-const demoUsername = import.meta.env.DEMO_USERNAME?.trim() || 'lily';
+const demoUsername = import.meta.env.DEMO_USERNAME?.trim() || 'admin';
 const demoPassword =
-  import.meta.env.DEMO_PASSWORD?.trim() || 'la_graciosa_con_culo_gordo';
+  import.meta.env.DEMO_PASSWORD?.trim() || 'admin123';
+const runtimeDemoUsername = process.env.DEMO_USERNAME?.trim() || demoUsername;
+const runtimeDemoPassword = process.env.DEMO_PASSWORD?.trim() || demoPassword;
 ---
 
 <BaseLayout title="Login | Marketing Planner">
@@ -36,16 +38,22 @@ const demoPassword =
           </div>
         </div>
 
-        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Acceso demo</p>
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Acceso</p>
         <h2 class="mt-3 font-display text-4xl font-semibold text-slate-950">Entra al panel privado</h2>
         <p class="mt-3 text-base leading-7 text-slate-500">
-          He dejado un login funcional con cookie de sesion para que el flujo se sienta mas real desde el primer clic.
+          Accede con el usuario administrador configurado y entra directamente al planner conectado a base de datos.
         </p>
       </div>
 
-      {error && (
+      {error === '1' && (
         <div class="mb-6 rounded-[24px] border border-rose-100 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
           Credenciales no validas. Usa el acceso admin configurado abajo.
+        </div>
+      )}
+
+      {error === 'server' && (
+        <div class="mb-6 rounded-[24px] border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+          El acceso no pudo completarse por un problema temporal del servidor. Si estas en Netlify, revisa `DATABASE_URL` para activar la persistencia completa.
         </div>
       )}
 
@@ -55,7 +63,7 @@ const demoPassword =
           <input
             type="text"
             name="username"
-            value={demoUsername}
+            value={runtimeDemoUsername}
             class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-800 outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
           />
         </label>
@@ -64,13 +72,13 @@ const demoPassword =
           <input
             type="password"
             name="password"
-            value={demoPassword}
+            value={runtimeDemoPassword}
             class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-800 outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
           />
         </label>
         <button class="inline-flex w-full items-center justify-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#3730a3,_#4f46e5)] px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
           <Icon name="spark" size={18} />
-          Entrar a la demo
+          Entrar
         </button>
       </form>
 
@@ -78,7 +86,7 @@ const demoPassword =
         <p class="text-sm font-semibold text-slate-800">Credenciales disponibles</p>
         <div class="mt-4 grid gap-3">
           <div class="rounded-2xl border border-white bg-white px-4 py-3 text-sm text-slate-600">
-            <span class="font-semibold text-slate-900">Admin:</span> {demoUsername} / {demoPassword}
+            <span class="font-semibold text-slate-900">Admin:</span> {runtimeDemoUsername} / {runtimeDemoPassword}
           </div>
         </div>
       </div>

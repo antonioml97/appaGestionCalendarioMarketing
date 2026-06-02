@@ -305,7 +305,6 @@ export const saveEvent = async (
     endsAt?: Date | null;
     description?: string | null;
     status: EventStatus;
-    customColor?: string | null;
   },
 ) => {
   const db = await getDb();
@@ -343,7 +342,7 @@ export const saveEvent = async (
         endsAt: input.endsAt ?? null,
         description: input.description ?? null,
         status: input.status,
-        customColor: input.customColor ?? null,
+        customColor: null,
         responsibleUserId: user.id,
         updatedAt: new Date(),
       })
@@ -369,7 +368,7 @@ export const saveEvent = async (
     startsAt: input.startsAt,
     endsAt: input.endsAt ?? null,
     status: input.status,
-    customColor: input.customColor ?? null,
+    customColor: null,
     responsibleUserId: user.id,
     createdByUserId: user.id,
     createdAt: new Date(),
@@ -427,6 +426,7 @@ export const duplicateEvent = async (user: PlannerUser, eventId: string) => {
     ...source,
     id,
     title: `${source.title} (copia)`,
+    customColor: null,
     responsibleUserId: user.id,
     createdByUserId: user.id,
     createdAt: new Date(),

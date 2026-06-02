@@ -43,7 +43,7 @@ export const resolveEventColor = (
   event: CalendarEvent,
   client: Client,
   typeColor: string,
-) => event.customColor || client.color || typeColor;
+) => client.color || event.customColor || typeColor;
 
 /**
  * Enriquece los eventos con relaciones y metadatos necesarios para la UI.

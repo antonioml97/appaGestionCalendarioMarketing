@@ -5,14 +5,14 @@ import { neon } from '@neondatabase/serverless';
 import { and, count, eq, sql } from 'drizzle-orm';
 import { drizzle as drizzleNeon } from 'drizzle-orm/neon-http';
 import { drizzle as drizzlePglite } from 'drizzle-orm/pglite';
-import { clients as seedClients, eventTypes as seedEventTypes, events as seedEvents, organizations as seedOrganizations, users as seedUsers } from '../data/mockData';
 import {
-  calendarEvents,
-  clients,
-  eventTypes,
-  organizations,
-  users,
-} from './schema';
+  clients as seedClients,
+  eventTypes as seedEventTypes,
+  events as seedEvents,
+  organizations as seedOrganizations,
+  users as seedUsers,
+} from '../data/mockData';
+import { calendarEvents, clients, eventTypes, organizations, users } from './schema';
 
 type PlannerDb = ReturnType<typeof drizzlePglite>;
 
@@ -22,9 +22,11 @@ const globalForDb = globalThis as typeof globalThis & {
 };
 
 const normalizeDate = (value: string) => new Date(value);
+const readEnv = (key: keyof NodeJS.ProcessEnv, fallback?: string) =>
+  process.env[key]?.trim() || fallback;
 
 const createDb = async (): Promise<PlannerDb> => {
-  const connectionString = import.meta.env.DATABASE_URL;
+  const connectionString = readEnv('DATABASE_URL', import.meta.env.DATABASE_URL?.trim());
 
   if (connectionString) {
     const client = neon(connectionString);
@@ -32,7 +34,9 @@ const createDb = async (): Promise<PlannerDb> => {
   }
 
   if (import.meta.env.PROD) {
-    throw new Error('DATABASE_URL no está configurada. Configúrala en Netlify para usar la base de datos en producción.');
+    throw new Error(
+      '[planner-db] DATABASE_URL no esta configurada. Configurala en Netlify para usar la base de datos real en produccion.',
+    );
   }
 
   const dataDir = join(process.cwd(), '.data');
@@ -182,35 +186,35 @@ const seedDatabase = async (db: PlannerDb) => {
     );
   }
 
-  const lilySeed = seedUsers[0];
+  const adminSeed = seedUsers[0];
 
   await db
     .insert(users)
     .values({
-      id: lilySeed.id,
-      organizationId: lilySeed.organizationId,
-      username: lilySeed.username,
-      name: lilySeed.name,
-      email: lilySeed.email,
-      passwordHash: lilySeed.demoPassword ?? '',
+      id: adminSeed.id,
+      organizationId: adminSeed.organizationId,
+      username: adminSeed.username,
+      name: adminSeed.name,
+      email: adminSeed.email,
+      passwordHash: adminSeed.demoPassword ?? '',
       authProvider: null,
       role: 'admin',
-      title: lilySeed.title,
-      avatarColor: lilySeed.avatarColor,
+      title: adminSeed.title,
+      avatarColor: adminSeed.avatarColor,
       active: true,
-      createdAt: normalizeDate(lilySeed.createdAt),
+      createdAt: normalizeDate(adminSeed.createdAt),
       updatedAt: new Date(),
     })
     .onConflictDoUpdate({
       target: users.id,
       set: {
-        username: lilySeed.username,
-        name: lilySeed.name,
-        email: lilySeed.email,
-        passwordHash: lilySeed.demoPassword ?? '',
+        username: adminSeed.username,
+        name: adminSeed.name,
+        email: adminSeed.email,
+        passwordHash: adminSeed.demoPassword ?? '',
         role: 'admin',
-        title: lilySeed.title,
-        avatarColor: lilySeed.avatarColor,
+        title: adminSeed.title,
+        avatarColor: adminSeed.avatarColor,
         active: true,
         updatedAt: new Date(),
       },
@@ -219,14 +223,14 @@ const seedDatabase = async (db: PlannerDb) => {
   await db
     .update(calendarEvents)
     .set({
-      responsibleUserId: lilySeed.id,
-      createdByUserId: lilySeed.id,
+      responsibleUserId: adminSeed.id,
+      createdByUserId: adminSeed.id,
       updatedAt: new Date(),
     })
     .where(
       and(
-        eq(calendarEvents.organizationId, lilySeed.organizationId),
-        sql`${calendarEvents.createdByUserId} <> ${lilySeed.id}`,
+        eq(calendarEvents.organizationId, adminSeed.organizationId),
+        sql`${calendarEvents.createdByUserId} <> ${adminSeed.id}`,
       ),
     );
 };
@@ -241,12 +245,25 @@ export const getDb = async () => {
     globalForDb.plannerDbPromise = createDb();
   }
 
-  const db = await globalForDb.plannerDbPromise;
+  let db: PlannerDb;
+
+  try {
+    db = await globalForDb.plannerDbPromise;
+  } catch (error) {
+    globalForDb.plannerDbPromise = undefined;
+    throw error;
+  }
 
   if (!globalForDb.plannerDbInitPromise) {
     globalForDb.plannerDbInitPromise = initializeDatabase(db);
   }
 
-  await globalForDb.plannerDbInitPromise;
+  try {
+    await globalForDb.plannerDbInitPromise;
+  } catch (error) {
+    globalForDb.plannerDbInitPromise = undefined;
+    throw error;
+  }
+
   return db;
 };

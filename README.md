@@ -1,70 +1,117 @@
 # Marketing Planner
 
-Aplicación web de calendario editorial pensada para agencias o equipos de marketing que gestionan varios clientes desde un único panel.
+Aplicacion web para gestionar un calendario editorial desde un panel privado. Esta pensada para agencias o equipos de marketing que necesitan organizar clientes, tipos de contenido y eventos en una sola interfaz.
 
-La demo actual incluye autenticación por cookie, navegación privada y una experiencia responsive orientada a planificación de contenido. La interfaz ya está preparada para evolucionar a una versión con persistencia real usando Drizzle + Neon/Netlify Database.
+Hoy el proyecto ya funciona con persistencia real:
 
-## Qué hace la app
+- login con cookie de sesion
+- base de datos PostgreSQL real en produccion
+- CRUD persistente para clientes, tipos de evento y eventos
+- despliegue SSR en Netlify
 
-- Muestra un dashboard con métricas rápidas y próximos eventos.
-- Permite navegar el calendario en vistas mensual, semanal, diaria y agenda.
-- Filtra eventos por cliente, tipo, estado y búsqueda textual.
-- Incluye páginas de gestión para clientes, tipos de evento y ajustes.
-- Separa la información por organización para simular un entorno multi-tenant.
-- Usa login demo con sesión en cookie para proteger las rutas privadas.
+La base de datos usada en produccion no es Netlify Database. La app esta preparada para usar una `DATABASE_URL` externa, y ahora mismo el flujo recomendado es Neon Postgres.
+
+## Que hace la app
+
+- Protege las rutas privadas con login y cookie de sesion.
+- Muestra un dashboard con metricas y proximos eventos.
+- Permite navegar el planner en vistas mensual, semanal, diaria y agenda.
+- Filtra por cliente, tipo, estado y texto de busqueda.
+- Permite crear, editar y borrar clientes.
+- Permite crear, editar y borrar tipos de evento.
+- Permite crear, editar, duplicar, actualizar y borrar eventos.
+- Mantiene la informacion separada por organizacion.
 
 ## Estado actual
 
-- La app funciona hoy con datos mock definidos en `src/data/mockData.ts`.
-- El login demo valida usuarios mock y guarda una cookie de sesión.
-- El esquema de base de datos ya existe en `src/db/schema.ts`.
-- `DATABASE_URL` solo es necesaria si vas a trabajar con Drizzle o conectar persistencia real.
+- La app ya lee y escribe contra base de datos real mediante Drizzle.
+- En produccion, `DATABASE_URL` es obligatoria.
+- En local, si falta `DATABASE_URL`, se usa `PGlite` dentro de `.data/marketing-planner-db`.
+- El seed inicial ya no carga clientes, tipos ni eventos demo.
+- El seed solo deja:
+  - una organizacion base
+  - un usuario admin inicial
+- Ese usuario admin se toma de `DEMO_USERNAME` y `DEMO_PASSWORD` y se sincroniza en la base de datos en el arranque.
+
+Importante:
+
+- Vaciar `src/data/mockData.ts` deja vacio el seed para bases nuevas o limpias.
+- No borra automaticamente datos antiguos de una base remota ya existente.
 
 ## Stack
 
 - Astro 6
 - TypeScript
 - Tailwind CSS 4
-- Netlify Adapter para Astro
 - Drizzle ORM
-- Neon / Netlify Database como capa preparada para persistencia
+- Neon serverless driver
+- Astro Netlify adapter
+- PGlite para desarrollo local sin PostgreSQL remoto
 
-## Credenciales demo
+## Variables de entorno
 
-- Admin: `laura@planner.demo` / `demo123`
-- Gestor: `diego@planner.demo` / `demo123`
+La app usa estas variables:
+
+```env
+DEMO_USERNAME=admin
+DEMO_PASSWORD=admin123
+DATABASE_URL=postgresql://usuario:password@host:5432/database?sslmode=require
+```
+
+Que hace cada una:
+
+- `DEMO_USERNAME`: usuario admin inicial.
+- `DEMO_PASSWORD`: password del admin inicial.
+- `DATABASE_URL`: conexion a PostgreSQL real. Obligatoria en produccion.
+
+Notas:
+
+- No subas credenciales reales al repositorio.
+- Si compartes una cadena real de `DATABASE_URL`, rotala despues.
+
+## Credenciales de acceso
+
+No hay credenciales fijas hardcodeadas como parte del producto final.
+
+El acceso visible en `/login` usa:
+
+- `DEMO_USERNAME`
+- `DEMO_PASSWORD`
+
+Y ese mismo usuario queda insertado o actualizado en la base de datos.
 
 ## Estructura de carpetas
 
 ```text
 .
-|-- public/                  # Favicons y archivos públicos
+|-- drizzle/                # Migraciones generadas por Drizzle
+|-- public/                 # Archivos publicos
 |-- src/
-|   |-- assets/              # SVG y recursos visuales
-|   |-- components/          # Componentes compartidos y del planner
-|   |   `-- planner/         # Calendario, agenda, sidebar, modal, detalle...
-|   |-- data/                # Datos mock de organizaciones, usuarios y eventos
-|   |-- db/                  # Cliente y esquema Drizzle
-|   |-- layouts/             # Layouts base de la aplicación
-|   |-- lib/                 # Utilidades de calendario, formato, sesión y filtros
-|   |-- pages/               # Rutas Astro
-|   |   `-- api/             # Login y logout
-|   |-- styles/              # Estilos globales
-|   `-- types/               # Tipos del dominio
-|-- astro.config.mjs         # Configuración Astro + Netlify adapter
-|-- drizzle.config.ts        # Configuración de migraciones con Drizzle
-|-- package.json             # Scripts y dependencias
+|   |-- components/         # Componentes compartidos y piezas del planner
+|   |   `-- planner/        # Calendario, agenda, filtros, panel lateral, modales
+|   |-- data/               # Seed inicial minimo
+|   |-- db/                 # Cliente DB, schema y repositorio
+|   |-- layouts/            # Layouts base
+|   |-- lib/                # Sesion, planner, calendario y utilidades
+|   |-- pages/              # Rutas Astro
+|   |   `-- api/            # Endpoints de login, logout y CRUD
+|   |-- styles/             # Estilos globales
+|   `-- types/              # Tipos del dominio
+|-- .netlify/               # Estado local del enlace con Netlify
+|-- astro.config.mjs        # Configuracion Astro + Netlify
+|-- drizzle.config.ts       # Configuracion de migraciones
+|-- package.json            # Scripts y dependencias
 `-- README.md
 ```
 
 ## Rutas principales
 
-- `/login`: acceso a la demo
-- `/dashboard`: resumen de actividad
-- `/calendar`: vista principal del planner
-- `/clients`: gestión visual de empresas/clientes
-- `/event-types`: catálogo de tipos de evento
-- `/settings`: configuración de organización y preferencias
+- `/login`: acceso al panel privado
+- `/dashboard`: resumen general
+- `/calendar`: planner principal
+- `/clients`: gestion de clientes
+- `/event-types`: gestion de tipos de evento
+- `/settings`: ajustes de organizacion
 
 ## Ejecutar en local
 
@@ -73,78 +120,134 @@ Requisitos:
 - Node.js `>= 22.12.0`
 - npm
 
-Instalación:
+Instalacion:
 
 ```bash
 npm install
 ```
 
-Entorno opcional para base de datos:
+Crea un `.env` con tus valores:
 
-```bash
-DATABASE_URL=postgresql://usuario:password@host:5432/database
+```env
+DEMO_USERNAME=admin
+DEMO_PASSWORD=admin123
 ```
 
-Desarrollo:
+Si quieres trabajar con PostgreSQL real tambien en local, anade:
+
+```env
+DATABASE_URL=postgresql://usuario:password@host:5432/database?sslmode=require
+```
+
+Arranque:
 
 ```bash
 npm run dev
 ```
 
-La app quedará disponible en `http://localhost:4321`.
+La app quedara disponible en `http://localhost:4321`.
 
-## Scripts útiles
+## Scripts utiles
 
-- `npm run dev`: levanta el entorno local
-- `npm run build`: genera la build para producción
-- `npm run preview`: previsualiza la build
-- `npm run check`: valida el proyecto con Astro
-- `npm run db:generate`: genera migraciones con Drizzle
-- `npm run db:studio`: abre Drizzle Studio
+- `npm run dev`: entorno local
+- `npm run build`: build de produccion
+- `npm run preview`: preview local de la build
+- `npm run check`: validacion con Astro
+- `npm run db:generate`: generar migraciones Drizzle
+- `npm run db:studio`: abrir Drizzle Studio
 
-## Cómo desplegar
+## Base de datos
 
-### Opción recomendada: Netlify
+### Produccion
 
-La app ya está configurada con `@astrojs/netlify` y `output: 'server'`, así que Netlify es el despliegue natural.
+- Usa PostgreSQL real por `DATABASE_URL`.
+- El proveedor recomendado para este proyecto es Neon.
+- Netlify solo aloja la app SSR; no aloja la base de datos de este proyecto.
 
-1. Sube el repositorio a GitHub, GitLab o Bitbucket.
-2. En Netlify, crea un sitio nuevo desde tu repositorio.
-3. Configura el comando de build como:
+### Desarrollo local
+
+- Sin `DATABASE_URL`, la app usa `PGlite`.
+- Eso permite desarrollar sin tener PostgreSQL levantado.
+
+### Seed actual
+
+El seed definido en `src/data/mockData.ts` deja la aplicacion vacia de contenido operativo:
+
+- 1 organizacion
+- 1 usuario admin
+- 0 clientes
+- 0 tipos de evento
+- 0 eventos
+
+## Neon y costes
+
+El flujo recomendado hoy es Neon Postgres.
+
+Puntos practicos:
+
+- Neon tiene plan `Free`.
+- Neon indica `no credit card required` para el plan gratis.
+- Para un MVP con 1 o 2 usuarios, normalmente ese plan deberia ser suficiente al inicio.
+- Si mas adelante necesitas mas recursos, puedes pasar a un plan de pago sin cambiar de proveedor.
+
+Referencia oficial:
+
+- [Neon Pricing](https://neon.com/pricing)
+- [Neon Plans Docs](https://neon.com/docs/introduction/pro-plan)
+
+## Despliegue
+
+### Netlify
+
+La app esta preparada para desplegarse en Netlify con `@astrojs/netlify` y salida SSR.
+
+Configuracion minima:
+
+1. Conecta el repositorio en Netlify.
+2. Usa este comando de build:
 
 ```bash
 npm run build
 ```
 
-4. Si vas a usar base de datos real, añade la variable de entorno `DATABASE_URL`.
-5. Lanza el deploy.
+3. Define estas variables en `Site configuration -> Environment variables`:
 
-Notas:
+```env
+DEMO_USERNAME=admin
+DEMO_PASSWORD=admin123
+DATABASE_URL=postgresql://usuario:password@host:5432/database?sslmode=require
+```
 
-- Si mantienes la demo con datos mock, puedes desplegar sin `DATABASE_URL`.
-- El adaptador de Astro para Netlify se encarga de generar la salida serverless necesaria.
+4. Lanza el deploy.
 
-### Opción con Netlify CLI
+Notas importantes:
+
+- `DATABASE_URL` es obligatoria en produccion.
+- Este proyecto ya no usa Netlify Database.
+- Si `DATABASE_URL` esta mal formada o falta, el login y las rutas privadas fallaran en produccion.
+
+### Netlify CLI
 
 ```bash
 npm install -g netlify-cli
-netlify deploy --build
 netlify deploy --prod --build
 ```
 
-## Persistencia y base de datos
+## Estado del despliegue actual
 
-El proyecto ya deja preparada la transición a persistencia real:
+URL publica actual:
 
-- `src/db/schema.ts` define organizaciones, usuarios, clientes, tipos y eventos.
-- `src/db/client.ts` crea la conexión usando `DATABASE_URL`.
-- `drizzle.config.ts` deja lista la generación de migraciones.
+- [https://gestiontropiqo.netlify.app](https://gestiontropiqo.netlify.app)
 
-Ahora mismo esa capa está preparada, pero la UI sigue leyendo los datos desde `src/data/mockData.ts`.
+Comportamiento esperado del acceso:
 
-## Siguiente evolución natural
+- `/` redirige a `/login` si no hay sesion
+- `/login` muestra el usuario admin configurado
+- `POST /api/login` crea la cookie y redirige a `/calendar`
 
-- Sustituir `mockData.ts` por consultas reales con Drizzle.
-- Convertir el login demo en autenticación real.
-- Añadir CRUD persistente para eventos, clientes y tipos.
-- Incorporar permisos por rol y preferencias guardadas por organización.
+## Siguientes pasos recomendados
+
+- Crear los primeros clientes reales desde `/clients`.
+- Crear los tipos de evento reales desde `/event-types`.
+- Empezar a cargar eventos desde `/calendar`.
+- Si quieres una base completamente limpia, borrar tambien los datos remotos antiguos de Neon si existieran.

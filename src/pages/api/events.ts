@@ -17,7 +17,6 @@ const eventSchema = z.object({
   endsAt: z.string().trim().optional(),
   description: z.string().trim().optional(),
   status: z.custom<EventStatus>(),
-  customColor: z.string().trim().optional(),
 });
 
 export const POST: APIRoute = async ({ request, redirect, locals }) => {
@@ -56,7 +55,6 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
     endsAt: String(formData.get('endsAt') ?? '').trim() || undefined,
     description: String(formData.get('description') ?? '').trim() || undefined,
     status: String(formData.get('status') ?? 'pending') as EventStatus,
-    customColor: String(formData.get('customColor') ?? '').trim() || undefined,
   });
 
   await saveEvent(currentUser, {
