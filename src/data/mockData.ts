@@ -5,22 +5,10 @@ import type {
   Organization,
   PlannerUser,
 } from '../types/planner';
+import { getDemoCredentials } from '../config/env';
 
 const createdAt = '2026-05-01T09:00:00';
-
-/**
- * Nombre de usuario configurable para la cuenta admin inicial.
- */
-const adminUsername =
-  process.env.DEMO_USERNAME?.trim() || import.meta.env.DEMO_USERNAME?.trim() || 'admin';
-
-/**
- * Contrasena configurable para la cuenta admin inicial.
- */
-const adminPassword =
-  process.env.DEMO_PASSWORD?.trim() ||
-  import.meta.env.DEMO_PASSWORD?.trim() ||
-  'admin123';
+const { username: adminUsername, password: adminPassword } = getDemoCredentials();
 
 /**
  * Organizacion inicial usada para el primer arranque del planner.

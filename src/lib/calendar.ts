@@ -97,7 +97,13 @@ export const isSameDay = (left: Date, right: Date) =>
  * @param date Fecha a serializar.
  * @returns Clave diaria estable.
  */
-export const dateKey = (date: Date) => normalize(date).toISOString().slice(0, 10);
+export const dateKey = (date: Date) => {
+  const normalized = normalize(date);
+  const year = normalized.getFullYear();
+  const month = String(normalized.getMonth() + 1).padStart(2, '0');
+  const day = String(normalized.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 /**
  * Construye la matriz de semanas usada en la vista mensual.

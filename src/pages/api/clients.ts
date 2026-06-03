@@ -1,14 +1,11 @@
 import type { APIRoute } from 'astro';
-import { z } from 'zod';
 import { deleteClient, saveClient } from '../../db/repository';
-
-const clientSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().trim().min(2),
-  color: z.string().trim().min(4).max(16),
-  description: z.string().trim().optional(),
-  active: z.boolean(),
-});
+import {
+  parseClientFormData,
+  readAction,
+  readId,
+  readRedirectTo,
+} from '../../lib/validation/forms';
 
 export const POST: APIRoute = async ({ request, redirect, locals }) => {
   const currentUser = locals.currentUser;
@@ -18,23 +15,15 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
   }
 
   const formData = await request.formData();
-  const action = String(formData.get('_action') ?? 'save');
-  const redirectTo = String(formData.get('redirectTo') ?? '/clients');
+  const action = readAction(formData);
+  const redirectTo = readRedirectTo(formData, '/clients');
 
   if (action === 'delete') {
-    const id = String(formData.get('id') ?? '');
+    const id = readId(formData);
     await deleteClient(currentUser, id);
     return redirect(redirectTo);
   }
 
-  const parsed = clientSchema.parse({
-    id: String(formData.get('id') ?? '').trim() || undefined,
-    name: formData.get('name'),
-    color: formData.get('color'),
-    description: String(formData.get('description') ?? '').trim() || undefined,
-    active: formData.get('active') === 'on',
-  });
-
-  await saveClient(currentUser, parsed);
+  await saveClient(currentUser, parseClientFormData(formData));
   return redirect(redirectTo);
 };

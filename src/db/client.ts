@@ -1,4 +1,5 @@
 import { mkdir } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { PGlite } from '@electric-sql/pglite';
 import { neon } from '@neondatabase/serverless';
@@ -12,6 +13,7 @@ import {
   organizations as seedOrganizations,
   users as seedUsers,
 } from '../data/mockData';
+import { getDatabaseUrl, getPlannerDataDir } from '../config/env';
 import { calendarEvents, clients, eventTypes, organizations, users } from './schema';
 
 type PlannerDb = ReturnType<typeof drizzlePglite>;
@@ -22,21 +24,29 @@ const globalForDb = globalThis as typeof globalThis & {
 };
 
 const normalizeDate = (value: string) => new Date(value);
-const readEnv = (key: keyof NodeJS.ProcessEnv, fallback?: string) =>
-  process.env[key]?.trim() || fallback;
 
 const createDb = async (): Promise<PlannerDb> => {
-  const connectionString = readEnv('DATABASE_URL', import.meta.env.DATABASE_URL?.trim());
+  const connectionString = getDatabaseUrl();
+  const plannerDataDir = getPlannerDataDir();
 
   if (connectionString) {
     const client = neon(connectionString);
     return drizzleNeon({ client }) as unknown as PlannerDb;
   }
 
+  if (plannerDataDir) {
+    await mkdir(plannerDataDir, { recursive: true });
+    const client = new PGlite(join(plannerDataDir, 'marketing-planner-db'));
+    return drizzlePglite(client);
+  }
+
   if (import.meta.env.PROD) {
-    throw new Error(
-      '[planner-db] DATABASE_URL no esta configurada. Configurala en Netlify para usar la base de datos real en produccion.',
+    const tempDir = join(tmpdir(), 'marketing-planner-db');
+    console.warn(
+      '[planner-db] DATABASE_URL no esta configurada. Se usara almacenamiento temporal en /tmp hasta configurar la base real.',
     );
+    const client = new PGlite(tempDir);
+    return drizzlePglite(client);
   }
 
   const dataDir = join(process.cwd(), '.data');

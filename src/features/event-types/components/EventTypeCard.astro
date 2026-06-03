@@ -1,0 +1,76 @@
+---
+import Icon from '../../../components/Icon.astro';
+import StatusBadge from '../../../components/StatusBadge.astro';
+import { hexToRgba } from '../../../lib/format';
+import type { EventType, ResolvedCalendarEvent } from '../../../types/planner';
+
+interface Props {
+  eventType: EventType;
+  events: ResolvedCalendarEvent[];
+}
+
+const { eventType, events } = Astro.props;
+---
+
+<article class="rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]">
+  <div class="flex items-start justify-between gap-4">
+    <div
+      class="flex h-14 w-14 items-center justify-center rounded-[22px]"
+      style={`background:${hexToRgba(eventType.color, 0.12)}; color:${eventType.color};`}
+    >
+      <Icon name={eventType.icon} size={22} />
+    </div>
+    <StatusBadge
+      label={eventType.active ? 'Activo' : 'Inactivo'}
+      tone={eventType.active ? 'info' : 'muted'}
+    />
+  </div>
+
+  <h2 class="mt-5 font-display text-3xl font-semibold text-slate-950">{eventType.name}</h2>
+  <p class="mt-3 text-sm leading-7 text-slate-500">
+    {eventType.description || 'Sin descripcion.'}
+  </p>
+
+  <div class="mt-6 flex items-end justify-between">
+    <div>
+      <p class="text-xs uppercase tracking-[0.18em] text-slate-400">Uso en calendario</p>
+      <p class="mt-2 text-3xl font-semibold text-slate-900">{events.length}</p>
+    </div>
+    <span
+      class="rounded-full px-4 py-2 text-sm font-semibold"
+      style={`background:${hexToRgba(eventType.color, 0.12)}; color:${eventType.color};`}
+    >
+      {eventType.color}
+    </span>
+  </div>
+
+  <div class="mt-6 flex flex-wrap gap-3">
+    <a
+      href={`/event-types?edit=${eventType.id}`}
+      class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+    >
+      <Icon name="edit" size={14} />
+      Editar
+    </a>
+    <a
+      href={`/calendar?type=${eventType.id}`}
+      class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700"
+    >
+      Ver eventos
+      <Icon name="chevron-right" size={14} />
+    </a>
+    <form
+      method="POST"
+      action="/api/event-types"
+      onsubmit="return confirm('Seguro que quieres borrar este tipo y sus eventos asociados?');"
+    >
+      <input type="hidden" name="_action" value="delete" />
+      <input type="hidden" name="id" value={eventType.id} />
+      <input type="hidden" name="redirectTo" value="/event-types" />
+      <button class="inline-flex items-center gap-2 rounded-full border border-rose-200 px-4 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50">
+        <Icon name="trash" size={14} />
+        Borrar
+      </button>
+    </form>
+  </div>
+</article>

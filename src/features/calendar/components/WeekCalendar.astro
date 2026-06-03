@@ -1,0 +1,82 @@
+---
+import { capitalize, formatDayMonth, formatShortWeekday } from '../../../lib/format';
+import { buildHref } from '../../../lib/url';
+import type { ResolvedCalendarEvent } from '../../../types/planner';
+import EventCard from './EventCard.astro';
+
+/**
+ * Props necesarias para la vista semanal del calendario.
+ */
+interface Props {
+  weekItems: { day: Date; events: ResolvedCalendarEvent[] }[];
+  selectedEventId?: string;
+  searchParams: URLSearchParams;
+}
+
+const { weekItems, selectedEventId, searchParams } = Astro.props;
+---
+
+<div class="grid gap-4 lg:grid-cols-7">
+{weekItems.map((item) => (
+    <section class="rounded-[28px] border border-white/80 bg-white/92 p-4 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)]">
+      <div class="mb-4">
+        <p class="text-sm font-semibold text-slate-900">{capitalize(formatShortWeekday(item.day).replace('.', ''))}</p>
+        <p class="text-xs text-slate-500">{formatDayMonth(item.day)}</p>
+      </div>
+      <div class="space-y-3">
+        {item.events.length ? (
+          <>
+            {item.events.map((event) => (
+              <EventCard
+                event={event}
+                href={buildHref('/calendar', searchParams, {
+                  event: event.id,
+                  modal: null,
+                  draftAt: null,
+                })}
+                selected={selectedEventId === event.id}
+              />
+            ))}
+            <a
+              href={buildHref('/calendar', searchParams, {
+                modal: 'new-event',
+                event: null,
+                draftAt: new Date(
+                  item.day.getFullYear(),
+                  item.day.getMonth(),
+                  item.day.getDate(),
+                  9,
+                  0,
+                  0,
+                  0,
+                ).toISOString(),
+              })}
+              class="flex min-h-24 items-center justify-center rounded-3xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm font-semibold text-slate-400 transition hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-700"
+            >
+              Crear evento en este dia
+            </a>
+          </>
+        ) : (
+          <a
+            href={buildHref('/calendar', searchParams, {
+              modal: 'new-event',
+              event: null,
+              draftAt: new Date(
+                item.day.getFullYear(),
+                item.day.getMonth(),
+                item.day.getDate(),
+                9,
+                0,
+                0,
+                0,
+              ).toISOString(),
+            })}
+            class="flex rounded-3xl border border-dashed border-slate-200 px-4 py-10 text-center text-sm font-semibold text-slate-400 transition hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-700"
+          >
+            <span class="m-auto">Sin eventos. Pulsa para crear uno.</span>
+          </a>
+        )}
+      </div>
+    </section>
+  ))}
+</div>

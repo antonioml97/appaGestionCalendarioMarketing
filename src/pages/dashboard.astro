@@ -1,8 +1,8 @@
 ---
 import AppShell from '../components/AppShell.astro';
 import Icon from '../components/Icon.astro';
-import EventCard from '../components/planner/EventCard.astro';
 import { getOrganizationBundle } from '../db/repository';
+import EventCard from '../features/calendar/components/EventCard.astro';
 import { parseDateParam } from '../lib/calendar';
 import { formatMonthYear } from '../lib/format';
 import { getDashboardMetrics, getUpcomingEvents, resolveEvents } from '../lib/planner';

@@ -1,0 +1,90 @@
+---
+import { formatLongDate } from '../../../lib/format';
+import { buildHref } from '../../../lib/url';
+import type { ResolvedCalendarEvent } from '../../../types/planner';
+import EventCard from './EventCard.astro';
+
+/**
+ * Props para la vista detallada de un dia.
+ */
+interface Props {
+  focusDate: Date;
+  events: ResolvedCalendarEvent[];
+  selectedEventId?: string;
+  searchParams: URLSearchParams;
+}
+
+const { focusDate, events, selectedEventId, searchParams } = Astro.props;
+const slotHours = Array.from({ length: 13 }, (_, index) => index + 8);
+const slotItems = slotHours.map((hour) => {
+  const slotDate = new Date(
+    focusDate.getFullYear(),
+    focusDate.getMonth(),
+    focusDate.getDate(),
+    hour,
+    0,
+    0,
+    0,
+  );
+  const slotEvent = events.find((event) => {
+    const eventDate = new Date(event.startsAt);
+    return (
+      eventDate.getFullYear() === slotDate.getFullYear() &&
+      eventDate.getMonth() === slotDate.getMonth() &&
+      eventDate.getDate() === slotDate.getDate() &&
+      eventDate.getHours() === slotDate.getHours()
+    );
+  });
+
+  return { hour, slotDate, slotEvent };
+});
+---
+
+<section class="rounded-[30px] border border-white/80 bg-white/96 p-5 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)]">
+  <div class="mb-5 flex items-center justify-between">
+    <div>
+      <p class="font-display text-2xl font-semibold text-slate-900">{formatLongDate(focusDate)}</p>
+      <p class="text-sm text-slate-500">Planificación detallada del día seleccionado</p>
+    </div>
+    <div class="rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
+      {events.length} eventos
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    {slotItems.map(({ hour, slotDate, slotEvent }) => (
+      <div class="grid gap-4 rounded-[26px] border border-slate-100 p-4 md:grid-cols-[90px_minmax(0,1fr)]">
+        <div class="text-sm font-semibold text-slate-500">{String(hour).padStart(2, '0')}:00</div>
+        {slotEvent ? (
+          <EventCard
+            event={slotEvent}
+            href={buildHref('/calendar', searchParams, {
+              event: slotEvent.id,
+              modal: null,
+              draftAt: null,
+            })}
+            selected={selectedEventId === slotEvent.id}
+            mode="list"
+          />
+        ) : (
+          <a
+            href={buildHref('/calendar', searchParams, {
+              modal: 'new-event',
+              event: null,
+              draftAt: slotDate.toISOString(),
+            })}
+            class="flex min-h-24 items-center rounded-[22px] border border-dashed border-slate-200 px-5 py-4 text-sm font-semibold text-slate-400 transition hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-700"
+          >
+            Crear evento en este hueco
+          </a>
+        )}
+      </div>
+    ))}
+
+    {!events.length && (
+      <div class="rounded-[26px] border border-dashed border-slate-200 px-6 py-4 text-center text-sm text-slate-400">
+        No hay eventos programados para esta fecha. Puedes crear uno pulsando cualquier hueco.
+      </div>
+    )}
+  </div>
+</section>

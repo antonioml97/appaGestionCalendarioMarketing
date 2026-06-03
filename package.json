@@ -10,6 +10,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:feature": "vitest run tests/feature",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "astro": "astro"
@@ -30,6 +33,7 @@
     "@astrojs/check": "^0.9.9",
     "drizzle-kit": "^0.31.10",
     "playwright": "^1.60.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
   }
 }

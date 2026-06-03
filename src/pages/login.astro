@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
+import { getDemoCredentials } from '../config/env';
 
 /**
  * Evita mostrar el login cuando ya existe una sesion valida.
@@ -17,11 +18,7 @@ const error = Astro.url.searchParams.get('error');
 /**
  * Credenciales demo visibles en la pantalla de acceso.
  */
-const demoUsername = import.meta.env.DEMO_USERNAME?.trim() || 'admin';
-const demoPassword =
-  import.meta.env.DEMO_PASSWORD?.trim() || 'admin123';
-const runtimeDemoUsername = process.env.DEMO_USERNAME?.trim() || demoUsername;
-const runtimeDemoPassword = process.env.DEMO_PASSWORD?.trim() || demoPassword;
+const { username: runtimeDemoUsername, password: runtimeDemoPassword } = getDemoCredentials();
 ---
 
 <BaseLayout title="Login | Marketing Planner">
