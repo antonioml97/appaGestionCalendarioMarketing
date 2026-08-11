@@ -1,5 +1,5 @@
 ---
-import { hexToRgba, formatTime } from '../../../lib/format';
+import { getContrastTextColor, hexToRgba, formatTime } from '../../../lib/format';
 import { statusTone } from '../../../lib/planner';
 import type { ResolvedCalendarEvent } from '../../../types/planner';
 import Icon from '../../../components/Icon.astro';
@@ -12,7 +12,7 @@ interface Props {
   event: ResolvedCalendarEvent;
   href: string;
   selected?: boolean;
-  mode?: 'calendar' | 'list';
+  mode?: 'compact' | 'calendar' | 'list';
 }
 
 const { event, href, selected = false, mode = 'calendar' } = Astro.props;
@@ -21,21 +21,42 @@ const { event, href, selected = false, mode = 'calendar' } = Astro.props;
  * Color dominante usado para fondos y bordes de la tarjeta.
  */
 const accent = event.displayColor;
+const contrastText = getContrastTextColor(accent);
+const useLightText = contrastText === '#ffffff';
 ---
 
 <a
   href={href}
   class:list={[
     'group block rounded-[20px] border p-3 transition duration-200',
-    mode === 'calendar' ? 'min-h-[88px]' : 'min-h-[112px]',
+    mode === 'compact' ? 'min-h-[60px] p-2.5' : mode === 'calendar' ? 'min-h-[88px]' : 'min-h-[112px]',
     selected
       ? 'border-indigo-300 bg-white shadow-[0_18px_40px_-24px_rgba(79,70,229,0.45)] ring-2 ring-indigo-100'
       : 'border-white/70 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]',
   ]}
-  style={`background:${hexToRgba(accent, mode === 'calendar' ? 0.08 : 0.10)}; border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.25)};`}
+  style={mode === 'compact'
+    ? `background:linear-gradient(135deg, ${hexToRgba(accent, 0.98)}, ${hexToRgba(accent, 0.86)}); border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.68)}; color:${contrastText};`
+    : `background:${hexToRgba(accent, mode === 'calendar' ? 0.08 : 0.10)}; border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.25)};`}
 >
   {
-    mode === 'calendar' ? (
+    mode === 'compact' ? (
+      <>
+        <div class="mb-1.5 flex items-center justify-between gap-2">
+          <p class="min-w-0 truncate text-[9px] font-black uppercase tracking-[0.2em]" style={`color:${hexToRgba(contrastText, 0.78)};`}>
+            {event.client.name}
+          </p>
+          <div
+            class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+            style={`background:${useLightText ? 'rgba(255,255,255,0.18)' : 'rgba(15,23,42,0.10)'}; color:${contrastText};`}
+          >
+            <Icon name={event.eventType.icon} size={10} />
+          </div>
+        </div>
+        <p class="line-clamp-2 text-[12px] leading-4 font-semibold" style={`color:${contrastText};`}>
+          {event.title}
+        </p>
+      </>
+    ) : mode === 'calendar' ? (
       <>
         <div class="mb-2 flex items-start gap-2">
           <div

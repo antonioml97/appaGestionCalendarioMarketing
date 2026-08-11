@@ -100,6 +100,29 @@ export const hexToRgba = (hex: string, alpha: number) => {
 };
 
 /**
+ * Elige un color de texto con buen contraste sobre un fondo hexadecimal.
+ *
+ * @param hex Color de fondo en formato hexadecimal.
+ * @returns Blanco o slate oscuro segun la luminancia del fondo.
+ */
+export const getContrastTextColor = (hex: string) => {
+  const normalized = hex.replace('#', '');
+  const safe = normalized.length === 3
+    ? normalized
+        .split('')
+        .map((chunk) => `${chunk}${chunk}`)
+        .join('')
+    : normalized;
+  const int = Number.parseInt(safe, 16);
+  const r = (int >> 16) & 255;
+  const g = (int >> 8) & 255;
+  const b = int & 255;
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  return luminance > 0.62 ? '#0f172a' : '#ffffff';
+};
+
+/**
  * Obtiene las iniciales principales de un nombre compuesto.
  *
  * @param name Nombre completo.
