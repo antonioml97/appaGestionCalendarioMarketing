@@ -5,6 +5,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
+export const FEATURE_TEST_USERNAME = 'feature-admin';
+export const FEATURE_TEST_PASSWORD = 'feature-password';
+
 const waitForServer = async (url: string) => {
   for (let attempt = 0; attempt < 120; attempt += 1) {
     try {
@@ -73,6 +76,8 @@ export const startFeatureServer = async (): Promise<RunningServer> => {
             FORCE_COLOR: '0',
             NO_COLOR: '1',
             PLANNER_DATA_DIR: dataDir,
+            DEMO_USERNAME: FEATURE_TEST_USERNAME,
+            DEMO_PASSWORD: FEATURE_TEST_PASSWORD,
           },
           stdio: ['ignore', 'pipe', 'pipe'],
         },
@@ -85,6 +90,8 @@ export const startFeatureServer = async (): Promise<RunningServer> => {
           FORCE_COLOR: '0',
           NO_COLOR: '1',
           PLANNER_DATA_DIR: dataDir,
+          DEMO_USERNAME: FEATURE_TEST_USERNAME,
+          DEMO_PASSWORD: FEATURE_TEST_PASSWORD,
         },
         stdio: ['ignore', 'pipe', 'pipe'],
       });

@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { authenticateUser, SESSION_COOKIE } from '../../lib/session';
 
 /**
- * Procesa el login demo, persiste la cookie de sesion y redirige al calendario.
+ * Procesa el login demo, persiste la cookie de sesion y redirige al dashboard.
  */
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const formData = await request.formData();
@@ -30,5 +30,5 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     maxAge: 60 * 60 * 8,
   });
 
-  return redirect('/calendar');
+  return redirect('/dashboard');
 };

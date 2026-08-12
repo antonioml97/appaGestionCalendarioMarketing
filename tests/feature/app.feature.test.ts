@@ -1,5 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { startFeatureServer, type RunningServer } from './helpers/server';
+import {
+  FEATURE_TEST_PASSWORD,
+  FEATURE_TEST_USERNAME,
+  startFeatureServer,
+  type RunningServer,
+} from './helpers/server';
 
 const encodeForm = (data: Record<string, string>) => new URLSearchParams(data);
 
@@ -53,8 +58,8 @@ describe('feature flows', () => {
         Referer: `${server.baseUrl}/login`,
       },
       body: encodeForm({
-        username: 'lily',
-        password: 'la_graciosa_con_culo_gordo',
+        username: FEATURE_TEST_USERNAME,
+        password: FEATURE_TEST_PASSWORD,
       }),
       redirect: 'manual',
     });
@@ -88,14 +93,14 @@ describe('feature flows', () => {
       method: 'POST',
       headers: formHeaders('/login'),
       body: encodeForm({
-        username: 'lily',
-        password: 'la_graciosa_con_culo_gordo',
+        username: FEATURE_TEST_USERNAME,
+        password: FEATURE_TEST_PASSWORD,
       }),
       redirect: 'manual',
     });
 
     expect(loginResponse.status).toBe(302);
-    expect(loginResponse.headers.get('location')).toBe('/calendar');
+    expect(loginResponse.headers.get('location')).toBe('/dashboard');
 
     const sessionCookie = extractSessionCookie(loginResponse);
     expect(sessionCookie).toContain('planner_session=');

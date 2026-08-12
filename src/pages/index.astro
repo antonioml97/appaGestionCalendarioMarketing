@@ -3,7 +3,7 @@
  * Ruta raiz que redirige segun exista o no una sesion activa.
  */
 if (Astro.locals.currentUser) {
-  return Astro.redirect('/calendar');
+  return Astro.redirect('/dashboard');
 }
 
 return Astro.redirect('/login');
