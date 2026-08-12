@@ -29,24 +29,24 @@ const upcoming = getUpcomingEvents(resolvedEvents, baseDate, 6);
   </section>
 
   <section class="grid gap-6">
-    <article class="rounded-[36px] border border-white/80 bg-[linear-gradient(135deg,_rgba(49,46,129,0.98),_rgba(79,70,229,0.96)_60%,_rgba(124,58,237,0.92))] p-6 text-white shadow-[0_40px_120px_-44px_rgba(79,70,229,0.5)] lg:p-8">
-      <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
+    <article class="rounded-[28px] border border-orange-200/70 bg-[linear-gradient(135deg,_#f5a34c,_#ffa749)] p-4 text-slate-950 shadow-[0_32px_90px_-44px_rgba(245,163,76,0.65)] md:rounded-[36px] md:p-6 lg:p-8">
+      <div class="grid gap-4 md:gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-end lg:gap-8">
         <div>
-          <h1 class="font-display text-5xl leading-[1.02] font-semibold">Vista general</h1>
+          <h1 class="font-display text-3xl leading-[1.02] font-semibold md:text-5xl">Vista general</h1>
         </div>
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid grid-cols-2 gap-3 md:gap-4">
           {[
             { label: 'Eventos proximos 7 dias', value: metrics.weekTotal, icon: 'calendar' as const },
             { label: 'Pendientes', value: metrics.pendingTotal, icon: 'clock' as const },
             { label: 'Publicados', value: metrics.publishedTotal, icon: 'publish' as const },
             { label: 'Empresas activas', value: metrics.activeClients, icon: 'company' as const },
           ].map((metric) => (
-            <div class="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10">
-                <Icon name={metric.icon} size={18} />
+            <div class="min-w-0 rounded-[20px] border border-white/45 bg-white/30 p-3 backdrop-blur md:rounded-[28px] md:p-5">
+              <div class="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-white/45 text-orange-800 md:mb-4 md:h-11 md:w-11 md:rounded-2xl">
+                <Icon name={metric.icon} size={16} />
               </div>
-              <p class="text-4xl font-semibold">{metric.value}</p>
-              <p class="mt-2 text-sm text-white/70">{metric.label}</p>
+              <p class="text-2xl font-semibold md:text-4xl">{metric.value}</p>
+              <p class="mt-1 text-[11px] leading-4 font-semibold text-slate-700 md:mt-2 md:text-sm">{metric.label}</p>
             </div>
           ))}
         </div>
