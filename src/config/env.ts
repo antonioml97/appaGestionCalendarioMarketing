@@ -18,3 +18,6 @@ export const getDatabaseUrl = () =>
 
 export const getPlannerDataDir = () =>
   readServerEnv('PLANNER_DATA_DIR') || trim(import.meta.env.PLANNER_DATA_DIR);
+
+export const getCalendarFeedSecret = () =>
+  readServerEnv('CALENDAR_FEED_SECRET') || trim(import.meta.env.CALENDAR_FEED_SECRET);

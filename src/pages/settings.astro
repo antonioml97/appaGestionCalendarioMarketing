@@ -1,10 +1,17 @@
 ---
 import AppShell from '../components/AppShell.astro';
 import Icon from '../components/Icon.astro';
+import { getCalendarFeedSecret } from '../config/env';
 import { getOrganizationBundle } from '../db/repository';
+import { buildCalendarFeedUrl } from '../lib/calendarFeed';
 
 const currentUser = Astro.locals.currentUser!;
 const dataset = await getOrganizationBundle(currentUser);
+const calendarFeedSecret = getCalendarFeedSecret();
+const calendarFeedUrl = calendarFeedSecret
+  ? buildCalendarFeedUrl(Astro.url.origin, currentUser.id, calendarFeedSecret)
+  : undefined;
+const appleCalendarUrl = calendarFeedUrl?.replace(/^https?:\/\//, 'webcal://');
 ---
 
 <AppShell title="Ajustes | Marketing Planner" currentPath="/settings" currentUser={currentUser} organization={dataset.organization}>
@@ -47,6 +54,65 @@ const dataset = await getOrganizationBundle(currentUser);
     </form>
 
     <div class="space-y-6">
+      <article class="rounded-[34px] border border-indigo-100 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(79,70,229,0.35)] lg:p-8">
+        <div class="flex items-start gap-4">
+          <div class="grid h-14 w-14 shrink-0 place-items-center rounded-[22px] bg-indigo-50 text-indigo-600">
+            <Icon name="calendar" size={22} />
+          </div>
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-500">Versión de prueba</p>
+            <h2 class="mt-2 font-display text-3xl font-semibold text-slate-950">Calendario en el móvil</h2>
+            <p class="mt-2 text-sm leading-7 text-slate-500">
+              Suscribe este calendario en Apple o Google Calendar. Los cambios se sincronizan automáticamente y el feed solicita un aviso 30 minutos antes.
+            </p>
+          </div>
+        </div>
+
+        {calendarFeedUrl ? (
+          <>
+            <label class="mt-6 block">
+              <span class="mb-2 block text-sm font-semibold text-slate-700">Enlace privado de suscripción</span>
+              <div class="flex flex-col gap-2 sm:flex-row">
+                <input
+                  id="calendar-feed-url"
+                  value={calendarFeedUrl}
+                  readonly
+                  class="min-w-0 flex-1 rounded-[20px] border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600 outline-none"
+                />
+                <button
+                  id="copy-calendar-feed"
+                  type="button"
+                  class="rounded-[20px] bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                >
+                  Copiar enlace
+                </button>
+              </div>
+              <span id="calendar-feed-copy-status" class="mt-2 block min-h-5 text-xs font-semibold text-emerald-600" aria-live="polite"></span>
+            </label>
+
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+              <a
+                href={appleCalendarUrl}
+                class="rounded-[22px] border border-slate-200 bg-white px-4 py-4 text-sm font-semibold text-slate-800 transition hover:border-indigo-200 hover:text-indigo-700"
+              >
+                Suscribir en iPhone/iPad
+              </a>
+              <div class="rounded-[22px] border border-slate-100 bg-slate-50/80 px-4 py-4 text-sm leading-6 text-slate-600">
+                <span class="font-semibold text-slate-800">Google Calendar:</span> desde un navegador abre Otros calendarios → + → Desde URL y pega el enlace.
+              </div>
+            </div>
+
+            <p class="mt-4 rounded-[20px] bg-amber-50 px-4 py-3 text-xs leading-6 text-amber-800">
+              Este enlace da acceso de lectura al calendario. No lo compartas. Después activa las notificaciones del calendario y añade su widget a la pantalla de inicio.
+            </p>
+          </>
+        ) : (
+          <p class="mt-6 rounded-[22px] border border-amber-100 bg-amber-50 px-4 py-4 text-sm leading-7 text-amber-800">
+            Falta configurar <code>CALENDAR_FEED_SECRET</code> para activar el enlace privado.
+          </p>
+        )}
+      </article>
+
       <article class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
         <div class="flex items-start gap-4">
           <div class="grid h-14 w-14 place-items-center rounded-[22px] bg-indigo-50 text-indigo-600">
@@ -90,4 +156,17 @@ const dataset = await getOrganizationBundle(currentUser);
       </article>
     </div>
   </section>
+
+  <script>
+    const copyButton = document.querySelector('#copy-calendar-feed');
+    const feedInput = document.querySelector('#calendar-feed-url');
+    const copyStatus = document.querySelector('#calendar-feed-copy-status');
+
+    copyButton?.addEventListener('click', async () => {
+      if (!(feedInput instanceof HTMLInputElement)) return;
+
+      await navigator.clipboard.writeText(feedInput.value);
+      if (copyStatus) copyStatus.textContent = 'Enlace copiado';
+    });
+  </script>
 </AppShell>

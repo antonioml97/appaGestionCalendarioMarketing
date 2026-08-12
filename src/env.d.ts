@@ -19,6 +19,7 @@ interface ImportMetaEnv {
   readonly DEMO_PASSWORD?: string;
   readonly DATABASE_URL?: string;
   readonly PLANNER_DATA_DIR?: string;
+  readonly CALENDAR_FEED_SECRET?: string;
 }
 
 export {};
