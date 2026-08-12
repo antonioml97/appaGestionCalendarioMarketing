@@ -1,5 +1,5 @@
 ---
-import { getContrastTextColor, hexToRgba, formatTime } from '../../../lib/format';
+import { hexToRgba, formatTime } from '../../../lib/format';
 import { statusTone } from '../../../lib/planner';
 import type { ResolvedCalendarEvent } from '../../../types/planner';
 import Icon from '../../../components/Icon.astro';
@@ -21,8 +21,7 @@ const { event, href, selected = false, mode = 'calendar' } = Astro.props;
  * Color dominante usado para fondos y bordes de la tarjeta.
  */
 const accent = event.displayColor;
-const contrastText = getContrastTextColor(accent);
-const useLightText = contrastText === '#ffffff';
+const softAccentStyle = `background:linear-gradient(135deg, ${hexToRgba(accent, 0.16)}, ${hexToRgba(accent, 0.06)}); border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.38)}; box-shadow:inset 4px 0 0 ${accent};`;
 ---
 
 <a
@@ -34,27 +33,25 @@ const useLightText = contrastText === '#ffffff';
       ? 'border-indigo-300 bg-white shadow-[0_18px_40px_-24px_rgba(79,70,229,0.45)] ring-2 ring-indigo-100'
       : 'border-white/70 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)]',
   ]}
-  style={mode === 'compact'
-    ? `background:linear-gradient(135deg, ${hexToRgba(accent, 0.98)}, ${hexToRgba(accent, 0.86)}); border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.68)}; color:${contrastText};`
-    : mode === 'list'
-      ? `background:linear-gradient(135deg, ${hexToRgba(accent, 0.16)}, ${hexToRgba(accent, 0.06)}); border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.38)}; box-shadow:inset 4px 0 0 ${accent};`
-      : `background:${hexToRgba(accent, 0.08)}; border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.25)};`}
+  style={mode === 'calendar'
+    ? `background:${hexToRgba(accent, 0.08)}; border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.25)};`
+    : softAccentStyle}
 >
   {
     mode === 'compact' ? (
       <>
         <div class="mb-1.5 flex items-center justify-between gap-2">
-          <p class="min-w-0 truncate text-[9px] font-black uppercase tracking-[0.2em]" style={`color:${hexToRgba(contrastText, 0.78)};`}>
+          <p class="min-w-0 truncate text-[9px] font-black uppercase tracking-[0.2em]" style={`color:${accent};`}>
             {event.client.name}
           </p>
           <div
             class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
-            style={`background:${useLightText ? 'rgba(255,255,255,0.18)' : 'rgba(15,23,42,0.10)'}; color:${contrastText};`}
+            style={`background:${hexToRgba(accent, 0.18)}; color:${accent};`}
           >
             <Icon name={event.eventType.icon} size={10} />
           </div>
         </div>
-        <p class="line-clamp-2 text-[12px] leading-4 font-semibold" style={`color:${contrastText};`}>
+        <p class="line-clamp-2 text-[12px] leading-4 font-semibold text-slate-900">
           {event.title}
         </p>
       </>
