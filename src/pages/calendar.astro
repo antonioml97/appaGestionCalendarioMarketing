@@ -55,7 +55,17 @@ const mobilePeriodLabel =
   organization={dataset.organization}
 >
   <section class="md:hidden">
-    <div class="mb-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-[28px] border border-white/80 bg-white/90 px-3 py-4 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.34)]">
+    <div class="mb-4 grid grid-cols-[auto_auto_minmax(0,1fr)_auto_auto] items-center gap-1 rounded-[28px] border border-white/80 bg-white/90 px-3 py-4 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.34)]">
+      <button
+        id="open-mobile-filters"
+        type="button"
+        class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700 transition active:bg-indigo-100"
+        aria-label="Abrir menú de filtros"
+        aria-controls="mobile-filters-menu"
+        aria-expanded="false"
+      >
+        <Icon name="menu" size={18} />
+      </button>
       <a
         href={buildHref('/calendar', searchParams, { date: previousMobileDate.toISOString() })}
         class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-600 transition active:bg-slate-100"
@@ -68,7 +78,7 @@ const mobilePeriodLabel =
           {capitalize(formatMonthYear(focusDate))}
         </p>
       </div>
-      <div class="flex items-center gap-1">
+      <div class="contents">
         <a
           href={buildHref('/calendar', searchParams, { date: nextMobileDate.toISOString() })}
           class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-600 transition active:bg-slate-100"
@@ -83,6 +93,43 @@ const mobilePeriodLabel =
         >
           <Icon name="plus" size={18} />
         </a>
+      </div>
+    </div>
+
+    <div id="mobile-filters-menu" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+      <button
+        id="close-mobile-filters-backdrop"
+        type="button"
+        class="absolute inset-0 bg-slate-950/35 backdrop-blur-sm"
+        aria-label="Cerrar menú de filtros"
+      ></button>
+      <div class="absolute inset-y-0 left-0 flex w-[min(88vw,360px)] flex-col bg-slate-50 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-4">
+          <div>
+            <p class="font-display text-xl font-semibold text-slate-950">Filtros</p>
+            <p class="text-xs text-slate-500">Personaliza el calendario</p>
+          </div>
+          <button
+            id="close-mobile-filters"
+            type="button"
+            class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-600"
+            aria-label="Cerrar menú de filtros"
+          >
+            <Icon name="close" size={18} />
+          </button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 pb-28">
+          <SidebarFilters
+            clients={dataset.clients}
+            eventTypes={dataset.eventTypes}
+            statuses={['pending', 'in_progress', 'completed', 'published', 'cancelled']}
+            selectedClientIds={selectedClientIds}
+            selectedTypeIds={selectedTypeIds}
+            selectedStatuses={selectedStatuses}
+            searchParams={searchParams}
+            workload={workload}
+          />
+        </div>
       </div>
     </div>
 
@@ -265,4 +312,32 @@ const mobilePeriodLabel =
     redirectTo={redirectTo}
     draftStartsAt={draftStartsAt}
   />
+
+  <script>
+    const mobileFiltersMenu = document.querySelector('#mobile-filters-menu');
+    const openMobileFilters = document.querySelector('#open-mobile-filters');
+    const closeMobileFilters = document.querySelector('#close-mobile-filters');
+    const closeMobileFiltersBackdrop = document.querySelector('#close-mobile-filters-backdrop');
+
+    const setMobileFiltersOpen = (open: boolean) => {
+      if (!(mobileFiltersMenu instanceof HTMLElement)) return;
+
+      mobileFiltersMenu.classList.toggle('hidden', !open);
+      mobileFiltersMenu.setAttribute('aria-hidden', String(!open));
+      openMobileFilters?.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('overflow-hidden', open);
+
+      if (open && closeMobileFilters instanceof HTMLElement) closeMobileFilters.focus();
+      else if (openMobileFilters instanceof HTMLElement) openMobileFilters.focus();
+    };
+
+    openMobileFilters?.addEventListener('click', () => setMobileFiltersOpen(true));
+    closeMobileFilters?.addEventListener('click', () => setMobileFiltersOpen(false));
+    closeMobileFiltersBackdrop?.addEventListener('click', () => setMobileFiltersOpen(false));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && mobileFiltersMenu?.getAttribute('aria-hidden') === 'false') {
+        setMobileFiltersOpen(false);
+      }
+    });
+  </script>
 </AppShell>
