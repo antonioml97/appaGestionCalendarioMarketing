@@ -43,56 +43,67 @@ const canCreateEvent = clients.length > 0 && eventTypes.length > 0;
 
 {
   open && (
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 px-4 py-6 backdrop-blur-md">
-      <div class="w-full max-h-[calc(100dvh-3rem)] max-w-3xl overflow-y-auto rounded-[32px] border border-white/90 bg-white shadow-[0_32px_100px_-24px_rgba(15,23,42,0.5)]">
-        <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-6 py-5 md:px-8 md:py-6">
-          <div class="flex items-center gap-3">
-            <span class="h-9 w-1.5 rounded-full bg-gradient-to-b from-orange-400 to-amber-500" aria-hidden="true"></span>
-            <p class="font-display text-3xl font-semibold text-slate-900">
-              {event ? 'Editar evento' : 'Nuevo evento'}
-            </p>
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 px-4 py-5 backdrop-blur-md">
+      <div class="max-h-[calc(100dvh-2.5rem)] w-full max-w-3xl overflow-y-auto rounded-[22px] border border-white/90 bg-[#fbfcff] shadow-[0_32px_100px_-24px_rgba(15,23,42,0.55)]">
+        <div class="flex items-center justify-between gap-4 px-5 pb-4 pt-5 md:px-7 md:pb-5 md:pt-6">
+          <div class="flex min-w-0 items-center gap-4">
+            <span class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-orange-50 text-orange-500" aria-hidden="true">
+              <Icon name="calendar" size={21} strokeWidth={2} />
+            </span>
+            <div class="min-w-0">
+              <p class="font-display text-2xl font-semibold text-slate-900 md:text-[28px]">
+                {event ? 'Editar evento' : 'Nuevo evento'}
+              </p>
+              <p class="mt-1 text-xs text-slate-500 md:text-sm">
+                {event ? 'Actualiza los detalles de este evento.' : 'Crea un nuevo evento en tu calendario.'}
+              </p>
+            </div>
           </div>
           <a
             href={closeHref}
-            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2"
+            class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2"
             aria-label="Cerrar modal"
           >
             <Icon name="close" size={16} />
           </a>
         </div>
 
-        <div class="p-6 md:p-8">
-        {!canCreateEvent && (
-          <div class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            Necesitas al menos una empresa y un tipo de evento activos para crear eventos.
-          </div>
-        )}
+        <div class="px-5 pb-5 md:px-7 md:pb-6">
+          {!canCreateEvent && (
+            <div class="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Necesitas al menos una empresa y un tipo de evento activos para crear eventos.
+            </div>
+          )}
 
         <form method="POST" action="/api/events">
           <input type="hidden" name="_action" value="save" />
           <input type="hidden" name="redirectTo" value={redirectTo} />
           {event && <input type="hidden" name="id" value={event.id} />}
 
-          <div class="grid gap-5 lg:grid-cols-2">
-            <section class="rounded-[24px] border border-slate-200/80 bg-slate-50/80 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Información</p>
-              <div class="mt-4 space-y-4">
+          <div class="grid gap-5 md:grid-cols-2">
+            <section class="rounded-xl border border-slate-200/90 bg-white p-5 shadow-[0_8px_24px_-20px_rgba(15,23,42,0.25)]">
+              <div class="flex items-center gap-2 text-orange-500">
+                <Icon name="company" size={16} strokeWidth={2} />
+                <p class="text-xs font-bold uppercase tracking-wide">Información</p>
+              </div>
+              <div class="mt-5 space-y-4">
                 <label class="block">
-                  <span class="mb-2 block text-sm font-semibold text-slate-700">Título</span>
+                  <span class="mb-2 block text-xs font-semibold text-slate-700">Título del evento</span>
                   <input
                     name="title"
                     required
-                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
+                    placeholder="Escribe el título..."
+                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
                     value={event?.title ?? ''}
                   />
                 </label>
                 <label class="block">
-                  <span class="mb-2 block text-sm font-semibold text-slate-700">Empresa</span>
+                  <span class="mb-2 block text-xs font-semibold text-slate-700">Empresa</span>
                   <select
                     id="event-client-select"
                     name="clientId"
                     required
-                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none transition hover:border-slate-300 focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
+                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition hover:border-slate-300 focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
                   >
                     {clients.map((client) => (
                       <option
@@ -107,11 +118,11 @@ const canCreateEvent = clients.length > 0 && eventTypes.length > 0;
                   </select>
                 </label>
                 <label class="block">
-                  <span class="mb-2 block text-sm font-semibold text-slate-700">Tipo de evento</span>
+                  <span class="mb-2 block text-xs font-semibold text-slate-700">Tipo de evento</span>
                   <select
                     name="eventTypeId"
                     required
-                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none transition hover:border-slate-300 focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
+                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition hover:border-slate-300 focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
                   >
                     {eventTypes.map((type) => (
                       <option value={type.id} selected={event?.eventTypeId === type.id}>
@@ -123,34 +134,37 @@ const canCreateEvent = clients.length > 0 && eventTypes.length > 0;
               </div>
             </section>
 
-            <section class="rounded-[24px] border border-slate-200/80 bg-slate-50/80 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Fecha</p>
-              <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <section class="rounded-xl border border-slate-200/90 bg-white p-5 shadow-[0_8px_24px_-20px_rgba(15,23,42,0.25)]">
+              <div class="flex items-center gap-2 text-emerald-600">
+                <Icon name="calendar" size={16} strokeWidth={2} />
+                <p class="text-xs font-bold uppercase tracking-wide">Fechas</p>
+              </div>
+              <div class="mt-5 grid gap-4 sm:grid-cols-2">
                 <label class="block">
-                  <span class="mb-2 block text-sm font-semibold text-slate-700">Inicio</span>
+                  <span class="mb-2 block text-xs font-semibold text-slate-700">Fecha de inicio</span>
                   <input
                     type="datetime-local"
                     name="startsAt"
                     required
-                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none transition hover:border-slate-300 focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
+                    class="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                     value={toDateTimeLocal(defaultStartsAt)}
                   />
                 </label>
                 <label class="block">
-                  <span class="mb-2 block text-sm font-semibold text-slate-700">Fin</span>
+                  <span class="mb-2 block text-xs font-semibold text-slate-700">Fecha de fin</span>
                   <input
                     type="datetime-local"
                     name="endsAt"
-                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none transition hover:border-slate-300 focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
+                    class="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                     value={toDateTimeLocal(defaultEndsAt)}
                   />
                 </label>
               </div>
-              <label class="mt-4 block">
-                <span class="mb-2 block text-sm font-semibold text-slate-700">Estado</span>
+              <label class="mt-10 block border-t border-slate-100 pt-6">
+                <span class="mb-2 block text-xs font-semibold text-slate-700">Estado</span>
                 <select
                   name="status"
-                  class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none transition hover:border-slate-300 focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                 >
                   {[
                     ['pending', 'Pendiente'],
@@ -167,31 +181,39 @@ const canCreateEvent = clients.length > 0 && eventTypes.length > 0;
               </label>
             </section>
 
-            <section class="rounded-[24px] border border-slate-200/80 bg-slate-50/80 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Producción</p>
-              <label class="mt-4 block">
-                <span class="mb-2 block text-sm font-semibold text-slate-700">Descripción</span>
+            <section class="rounded-xl border border-slate-200/90 bg-white p-5 shadow-[0_8px_24px_-20px_rgba(15,23,42,0.25)]">
+              <div class="flex items-center gap-2 text-blue-500">
+                <Icon name="edit" size={16} strokeWidth={2} />
+                <p class="text-xs font-bold uppercase tracking-wide">Producción</p>
+              </div>
+              <label class="mt-5 block">
+                <span class="mb-2 block text-xs font-semibold text-slate-700">Descripción</span>
                 <textarea
                   name="description"
-                  class="min-h-32 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none transition hover:border-slate-300 focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
+                  placeholder="Añade una descripción del evento..."
+                  class="min-h-36 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 >{event?.description ?? ''}</textarea>
               </label>
             </section>
 
-            <section class="rounded-[24px] border border-slate-200/80 bg-slate-50/80 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Recursos</p>
-              <div class="mt-4 space-y-4">
+            <section class="rounded-xl border border-slate-200/90 bg-white p-5 shadow-[0_8px_24px_-20px_rgba(15,23,42,0.25)]">
+              <div class="flex items-center gap-2 text-purple-500">
+                <Icon name="user" size={16} strokeWidth={2} />
+                <p class="text-xs font-bold uppercase tracking-wide">Recursos</p>
+              </div>
+              <div class="mt-5 space-y-4">
                 <label class="block">
-                  <span class="mb-2 block text-sm font-semibold text-slate-700">Responsable</span>
-                  <input
-                    readonly
-                    class="w-full rounded-xl border border-slate-200 bg-slate-100/70 px-4 py-3 text-sm text-slate-600 outline-none"
-                    value={`${currentUser.name} · ${currentUser.title}`}
-                  />
+                  <span class="mb-2 block text-xs font-semibold text-slate-700">Responsable</span>
+                  <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+                    <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-purple-50 text-purple-500">
+                      <Icon name="user" size={15} />
+                    </span>
+                    <span class="truncate">{currentUser.name} · {currentUser.title}</span>
+                  </div>
                 </label>
                 <label class="block">
-                  <span class="mb-2 block text-sm font-semibold text-slate-700">Color del evento</span>
-                  <div class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+                  <span class="mb-2 block text-xs font-semibold text-slate-700">Color del evento</span>
+                  <div class="rounded-xl border border-slate-200 bg-white px-4 py-3">
                     <div class="flex items-center gap-3">
                       <span
                         id="event-client-color-preview"
@@ -211,12 +233,13 @@ const canCreateEvent = clients.length > 0 && eventTypes.length > 0;
             </section>
           </div>
 
-          <div class="mt-7 flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:justify-end">
+          <div class="mt-6 flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
             <a href={closeHref} class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 focus-visible:ring-offset-2">Cancelar</a>
             <button
               disabled={!canCreateEvent}
-              class="inline-flex items-center justify-center rounded-xl bg-[linear-gradient(135deg,_#f59e42,_#ffad4d)] px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/25 transition hover:-translate-y-0.5 hover:brightness-105 hover:shadow-xl hover:shadow-orange-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,_#ff9f2f,_#ff5b35)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/25 transition hover:-translate-y-0.5 hover:brightness-105 hover:shadow-xl hover:shadow-orange-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
+              <Icon name="calendar" size={16} />
               {event ? 'Guardar cambios' : 'Guardar evento'}
             </button>
           </div>
