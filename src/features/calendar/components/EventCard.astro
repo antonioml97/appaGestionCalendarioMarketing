@@ -36,7 +36,9 @@ const useLightText = contrastText === '#ffffff';
   ]}
   style={mode === 'compact'
     ? `background:linear-gradient(135deg, ${hexToRgba(accent, 0.98)}, ${hexToRgba(accent, 0.86)}); border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.68)}; color:${contrastText};`
-    : `background:${hexToRgba(accent, mode === 'calendar' ? 0.08 : 0.10)}; border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.25)};`}
+    : mode === 'list'
+      ? `background:linear-gradient(135deg, ${hexToRgba(accent, 0.16)}, ${hexToRgba(accent, 0.06)}); border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.38)}; box-shadow:inset 4px 0 0 ${accent};`
+      : `background:${hexToRgba(accent, 0.08)}; border-color:${selected ? '#c7d2fe' : hexToRgba(accent, 0.25)};`}
 >
   {
     mode === 'compact' ? (
@@ -83,7 +85,7 @@ const useLightText = contrastText === '#ffffff';
         <div class="mb-2 flex items-start gap-3">
           <div
             class="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl text-[13px]"
-            style={`background:${hexToRgba(event.eventType.color, 0.14)}; color:${event.eventType.color};`}
+            style={`background:${hexToRgba(accent, 0.18)}; color:${accent};`}
           >
             <Icon name={event.eventType.icon} size={17} />
           </div>
