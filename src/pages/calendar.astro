@@ -33,6 +33,8 @@ const {
   workload,
   previousDate,
   nextDate,
+  previousMobileDate,
+  nextMobileDate,
   clearEventHref,
   closeModalHref,
   eventEditHref,
@@ -41,6 +43,9 @@ const {
   modalEvent,
   draftStartsAt,
 } = await getCalendarPageData(Astro.url, currentUser);
+
+const mobilePeriodLabel =
+  mobileScope === 'day' ? 'Día' : mobileScope === 'week' ? 'Semana' : 'Mes';
 ---
 
 <AppShell
@@ -50,21 +55,35 @@ const {
   organization={dataset.organization}
 >
   <section class="md:hidden">
-    <div class="mb-4 flex items-center justify-between rounded-[28px] border border-white/80 bg-white/90 px-4 py-4 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.34)]">
-      <button class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-600">
-        <Icon name="menu" size={18} />
-      </button>
-      <div class="text-center">
-        <p class="font-display text-xl font-semibold text-slate-900">
+    <div class="mb-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-[28px] border border-white/80 bg-white/90 px-3 py-4 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.34)]">
+      <a
+        href={buildHref('/calendar', searchParams, { date: previousMobileDate.toISOString() })}
+        class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-600 transition active:bg-slate-100"
+        aria-label={`${mobilePeriodLabel} anterior`}
+      >
+        <Icon name="chevron-left" size={18} />
+      </a>
+      <div class="min-w-0 text-center">
+        <p class="truncate font-display text-xl font-semibold text-slate-900">
           {capitalize(formatMonthYear(focusDate))}
         </p>
       </div>
-      <a
-        href={buildHref('/calendar', searchParams, { modal: 'new-event' })}
-        class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
-      >
-        <Icon name="plus" size={18} />
-      </a>
+      <div class="flex items-center gap-1">
+        <a
+          href={buildHref('/calendar', searchParams, { date: nextMobileDate.toISOString() })}
+          class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-600 transition active:bg-slate-100"
+          aria-label={`${mobilePeriodLabel} siguiente`}
+        >
+          <Icon name="chevron-right" size={18} />
+        </a>
+        <a
+          href={buildHref('/calendar', searchParams, { modal: 'new-event' })}
+          class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+          aria-label="Nuevo evento"
+        >
+          <Icon name="plus" size={18} />
+        </a>
+      </div>
     </div>
 
     <div class="mb-4 rounded-[28px] border border-white/80 bg-white/95 p-2 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.34)]">

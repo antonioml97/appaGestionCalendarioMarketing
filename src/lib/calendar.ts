@@ -56,6 +56,21 @@ export const addMonths = (date: Date, months: number) => {
 };
 
 /**
+ * Calcula los destinos anterior y siguiente para la navegacion movil.
+ *
+ * @param date Fecha visible actualmente.
+ * @param scope Alcance seleccionado en la agenda movil.
+ * @returns Fechas que deben abrir los dos controles de navegacion.
+ */
+export const getMobileNavigationDates = (date: Date, scope: string) => {
+  const step = scope === 'day' ? 1 : scope === 'week' ? 7 : undefined;
+
+  return step
+    ? { previous: addDays(date, -step), next: addDays(date, step) }
+    : { previous: addMonths(date, -1), next: addMonths(date, 1) };
+};
+
+/**
  * Obtiene el lunes de la semana correspondiente a una fecha.
  *
  * @param date Fecha de referencia.

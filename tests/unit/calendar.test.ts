@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addDays,
   dateKey,
+  getMobileNavigationDates,
   getMonthMatrix,
   groupEventsByDay,
   parseDateParam,
@@ -119,5 +120,14 @@ describe('calendar helpers', () => {
     expect(addDays(new Date('2026-06-05T00:00:00'), 3).toISOString()).toBe(
       new Date('2026-06-08T00:00:00').toISOString(),
     );
+  });
+
+  it('calcula la navegacion movil segun el alcance visible', () => {
+    const focusDate = new Date('2026-06-05T09:00:00');
+
+    expect(getMobileNavigationDates(focusDate, 'day').previous.getDate()).toBe(4);
+    expect(getMobileNavigationDates(focusDate, 'week').next.getDate()).toBe(12);
+    expect(getMobileNavigationDates(focusDate, 'month').previous.getMonth()).toBe(4);
+    expect(getMobileNavigationDates(focusDate, 'month').next.getMonth()).toBe(6);
   });
 });

@@ -4,6 +4,7 @@ import {
   addMonths,
   eventsForDate,
   eventsForWeek,
+  getMobileNavigationDates,
   getMonthMatrix,
   groupEventsByDay,
   isSameDay,
@@ -84,6 +85,10 @@ export const getCalendarPageData = async (url: URL, currentUser: PlannerUser) =>
       : view === 'week'
         ? addDays(focusDate, 7)
         : addDays(focusDate, 1);
+  const { previous: previousMobileDate, next: nextMobileDate } = getMobileNavigationDates(
+    focusDate,
+    mobileScope,
+  );
 
   const clearEventHref = buildHref('/calendar', searchParams, { event: null, modal: null });
   const closeModalHref = buildHref('/calendar', searchParams, { modal: null, draftAt: null });
@@ -125,6 +130,8 @@ export const getCalendarPageData = async (url: URL, currentUser: PlannerUser) =>
     workload,
     previousDate,
     nextDate,
+    previousMobileDate,
+    nextMobileDate,
     clearEventHref,
     closeModalHref,
     eventEditHref,
