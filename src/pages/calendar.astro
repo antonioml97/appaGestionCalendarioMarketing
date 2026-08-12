@@ -59,7 +59,7 @@ const mobilePeriodLabel =
       <button
         id="open-mobile-filters"
         type="button"
-        class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700 transition active:bg-indigo-100"
+        class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50 text-orange-700 transition active:bg-orange-100"
         aria-label="Abrir menú de filtros"
         aria-controls="mobile-filters-menu"
         aria-expanded="false"
@@ -88,7 +88,7 @@ const mobilePeriodLabel =
         </a>
         <a
           href={buildHref('/calendar', searchParams, { modal: 'new-event' })}
-          class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+          class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#f5a34c] text-slate-950 shadow-lg shadow-orange-500/25 transition hover:brightness-105"
           aria-label="Nuevo evento"
         >
           <Icon name="plus" size={18} />
@@ -144,7 +144,7 @@ const mobilePeriodLabel =
             href={buildHref('/calendar', searchParams, { scope: item.scope })}
             class:list={[
               'rounded-2xl px-3 py-2 text-center text-sm font-semibold transition',
-              mobileScope === item.scope ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500',
+              mobileScope === item.scope ? 'bg-orange-50 text-orange-700' : 'text-slate-500',
             ]}
           >
             {item.label}
@@ -199,7 +199,7 @@ const mobilePeriodLabel =
                 name="search"
                 value={search}
                 placeholder="Buscar eventos, empresas..."
-                class="w-full rounded-[22px] border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-sm text-slate-800 outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
+                class="w-full rounded-[22px] border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-sm text-slate-800 outline-none transition focus:border-orange-200 focus:bg-white focus:ring-4 focus:ring-orange-50"
               />
               {selectedClientIds.map((id) => <input type="hidden" name="client" value={id} />)}
               {selectedTypeIds.map((id) => <input type="hidden" name="type" value={id} />)}
@@ -239,7 +239,7 @@ const mobilePeriodLabel =
                     class:list={[
                       'rounded-2xl px-4 py-2 text-sm font-semibold transition',
                       view === item.view
-                        ? 'bg-white text-indigo-700 shadow-sm'
+                        ? 'bg-white text-orange-700 shadow-sm'
                         : 'text-slate-500 hover:text-slate-800',
                     ]}
                   >
@@ -250,7 +250,7 @@ const mobilePeriodLabel =
 
               <a
                 href={buildHref('/calendar', searchParams, { modal: 'new-event' })}
-                class="inline-flex items-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105"
+                class="inline-flex items-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#f5a34c,_#ffa749)] px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/25 transition hover:brightness-105"
               >
                 <Icon name="plus" size={16} />
                 Nuevo evento

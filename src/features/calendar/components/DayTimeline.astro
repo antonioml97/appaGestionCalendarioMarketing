@@ -46,7 +46,7 @@ const slotItems = slotHours.map((hour) => {
       <p class="font-display text-2xl font-semibold text-slate-900">{formatLongDate(focusDate)}</p>
       <p class="text-sm text-slate-500">Planificación detallada del día seleccionado</p>
     </div>
-    <div class="rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
+    <div class="rounded-full bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700">
       {events.length} eventos
     </div>
   </div>
@@ -73,7 +73,7 @@ const slotItems = slotHours.map((hour) => {
               event: null,
               draftAt: slotDate.toISOString(),
             })}
-            class="flex min-h-24 items-center rounded-[22px] border border-dashed border-slate-200 px-5 py-4 text-sm font-semibold text-slate-400 transition hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-700"
+            class="flex min-h-24 items-center rounded-[22px] border border-dashed border-slate-200 px-5 py-4 text-sm font-semibold text-slate-400 transition hover:border-orange-200 hover:bg-orange-50/60 hover:text-orange-700"
           >
             Crear evento en este hueco
           </a>

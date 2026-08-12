@@ -47,7 +47,7 @@ const weekdays = matrix[0]?.map((cell) => capitalize(formatShortWeekday(cell.dat
       return (
         <div
           class:list={[
-            'min-h-[176px] border-b border-r border-slate-100 p-3 transition hover:bg-indigo-50/40',
+            'min-h-[176px] border-b border-r border-slate-100 p-3 transition hover:bg-orange-50/40',
             !day.inCurrentMonth && 'bg-slate-50/60',
           ]}
         >
@@ -57,7 +57,7 @@ const weekdays = matrix[0]?.map((cell) => capitalize(formatShortWeekday(cell.dat
                 href={createHref}
                 class:list={[
                   'grid h-8 w-8 place-items-center rounded-full text-sm font-semibold transition hover:scale-105',
-                  day.isToday ? 'bg-indigo-600 text-white' : 'text-slate-700 hover:bg-indigo-50',
+                  day.isToday ? 'bg-[#f5a34c] text-slate-950' : 'text-slate-700 hover:bg-orange-50',
                 ]}
                 aria-label={`Crear evento el dia ${day.date.getDate()}`}
               >
@@ -69,7 +69,7 @@ const weekdays = matrix[0]?.map((cell) => capitalize(formatShortWeekday(cell.dat
             </div>
             <a
               href={createHref}
-              class="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-300 transition hover:bg-indigo-50 hover:text-indigo-700"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-300 transition hover:bg-orange-50 hover:text-orange-700"
               aria-label={`Anadir evento el dia ${day.date.getDate()}`}
             >
               +

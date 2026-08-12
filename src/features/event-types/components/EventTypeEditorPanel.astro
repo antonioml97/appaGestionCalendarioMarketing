@@ -31,7 +31,7 @@ const { eventType, availableIcons } = Astro.props;
         name="name"
         required
         value={eventType?.name ?? ''}
-        class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
+        class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-orange-200 focus:bg-white focus:ring-4 focus:ring-orange-50"
       />
     </label>
 
@@ -50,7 +50,7 @@ const { eventType, availableIcons } = Astro.props;
         <span class="mb-2 block text-sm font-semibold text-slate-700">Icono</span>
         <select
           name="icon"
-          class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
+          class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-orange-200 focus:bg-white focus:ring-4 focus:ring-orange-50"
         >
           {availableIcons.map((iconName) => (
             <option
@@ -68,7 +68,7 @@ const { eventType, availableIcons } = Astro.props;
       <span class="mb-2 block text-sm font-semibold text-slate-700">Descripcion</span>
       <textarea
         name="description"
-        class="min-h-32 w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50"
+        class="min-h-32 w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-orange-200 focus:bg-white focus:ring-4 focus:ring-orange-50"
       >{eventType?.description ?? ''}</textarea>
     </label>
 
@@ -78,7 +78,7 @@ const { eventType, availableIcons } = Astro.props;
     </label>
 
     <div class="flex flex-col gap-3 sm:flex-row">
-      <button class="inline-flex items-center justify-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
+      <button class="inline-flex items-center justify-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#f5a34c,_#ffa749)] px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/25 transition hover:brightness-105">
         <Icon name="edit" size={16} />
         {eventType ? 'Guardar cambios' : 'Crear tipo'}
       </button>

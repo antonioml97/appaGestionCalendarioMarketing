@@ -26,11 +26,11 @@ const appleCalendarUrl = calendarFeedUrl?.replace(/^https?:\/\//, 'webcal://');
       <div class="mt-8 space-y-6">
         <label class="block">
           <span class="mb-2 block text-sm font-semibold text-slate-700">Nombre de la organizacion</span>
-          <input name="name" value={dataset.organization.name} class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50" />
+          <input name="name" value={dataset.organization.name} class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-orange-200 focus:bg-white focus:ring-4 focus:ring-orange-50" />
         </label>
         <label class="block">
           <span class="mb-2 block text-sm font-semibold text-slate-700">Slug</span>
-          <input name="slug" value={dataset.organization.slug} class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50" />
+          <input name="slug" value={dataset.organization.slug} class="w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-orange-200 focus:bg-white focus:ring-4 focus:ring-orange-50" />
         </label>
         <label class="block">
           <span class="mb-2 block text-sm font-semibold text-slate-700">Color principal</span>
@@ -43,24 +43,24 @@ const appleCalendarUrl = calendarFeedUrl?.replace(/^https?:\/\//, 'webcal://');
         </label>
         <label class="block">
           <span class="mb-2 block text-sm font-semibold text-slate-700">Descripcion breve</span>
-          <textarea name="description" class="min-h-32 w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-indigo-200 focus:bg-white focus:ring-4 focus:ring-indigo-50">{dataset.organization.description || 'Planificador editorial para equipos de marketing con foco en claridad visual y operacion multiempresa.'}</textarea>
+          <textarea name="description" class="min-h-32 w-full rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm outline-none transition focus:border-orange-200 focus:bg-white focus:ring-4 focus:ring-orange-50">{dataset.organization.description || 'Planificador editorial para equipos de marketing con foco en claridad visual y operacion multiempresa.'}</textarea>
         </label>
       </div>
 
-      <button class="mt-6 inline-flex items-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#4338ca,_#4f46e5)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-105">
+      <button class="mt-6 inline-flex items-center gap-2 rounded-[22px] bg-[linear-gradient(135deg,_#f5a34c,_#ffa749)] px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/25 transition hover:brightness-105">
         <Icon name="edit" size={16} />
         Guardar organizacion
       </button>
     </form>
 
     <div class="space-y-6">
-      <article class="rounded-[34px] border border-indigo-100 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(79,70,229,0.35)] lg:p-8">
+      <article class="rounded-[34px] border border-orange-100 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(245,163,76,0.35)] lg:p-8">
         <div class="flex items-start gap-4">
-          <div class="grid h-14 w-14 shrink-0 place-items-center rounded-[22px] bg-indigo-50 text-indigo-600">
+          <div class="grid h-14 w-14 shrink-0 place-items-center rounded-[22px] bg-orange-50 text-orange-600">
             <Icon name="calendar" size={22} />
           </div>
           <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-500">Versión de prueba</p>
+            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-orange-600">Versión de prueba</p>
             <h2 class="mt-2 font-display text-3xl font-semibold text-slate-950">Calendario en el móvil</h2>
             <p class="mt-2 text-sm leading-7 text-slate-500">
               Suscribe este calendario en Apple o Google Calendar. Los cambios se sincronizan automáticamente y el feed solicita un aviso 30 minutos antes.
@@ -93,7 +93,7 @@ const appleCalendarUrl = calendarFeedUrl?.replace(/^https?:\/\//, 'webcal://');
             <div class="mt-4 grid gap-3 sm:grid-cols-2">
               <a
                 href={appleCalendarUrl}
-                class="rounded-[22px] border border-slate-200 bg-white px-4 py-4 text-sm font-semibold text-slate-800 transition hover:border-indigo-200 hover:text-indigo-700"
+                class="rounded-[22px] border border-slate-200 bg-white px-4 py-4 text-sm font-semibold text-slate-800 transition hover:border-orange-200 hover:text-orange-700"
               >
                 Suscribir en iPhone/iPad
               </a>
@@ -115,7 +115,7 @@ const appleCalendarUrl = calendarFeedUrl?.replace(/^https?:\/\//, 'webcal://');
 
       <article class="rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.35)] lg:p-8">
         <div class="flex items-start gap-4">
-          <div class="grid h-14 w-14 place-items-center rounded-[22px] bg-indigo-50 text-indigo-600">
+          <div class="grid h-14 w-14 place-items-center rounded-[22px] bg-orange-50 text-orange-600">
             <Icon name="calendar" size={22} />
           </div>
           <div>
