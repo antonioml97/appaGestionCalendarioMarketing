@@ -46,6 +46,7 @@ const {
 
 const mobilePeriodLabel =
   mobileScope === 'day' ? 'Día' : mobileScope === 'week' ? 'Semana' : 'Mes';
+const today = new Date();
 ---
 
 <AppShell
@@ -136,12 +137,16 @@ const mobilePeriodLabel =
     <div class="mb-4 rounded-[28px] border border-white/80 bg-white/95 p-2 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.34)]">
       <div class="grid grid-cols-3 gap-2">
         {[
-          { label: 'Hoy', scope: 'day' },
-          { label: 'Semana', scope: 'week' },
-          { label: 'Mes', scope: 'month' },
+          { label: 'Hoy', scope: 'day', date: today.toISOString() },
+          { label: 'Semana', scope: 'week', date: focusDate.toISOString() },
+          { label: 'Mes', scope: 'month', date: focusDate.toISOString() },
         ].map((item) => (
           <a
-            href={buildHref('/calendar', searchParams, { scope: item.scope })}
+            href={buildHref('/calendar', searchParams, {
+              scope: item.scope,
+              date: item.date,
+              event: null,
+            })}
             class:list={[
               'rounded-2xl px-3 py-2 text-center text-sm font-semibold transition',
               mobileScope === item.scope ? 'bg-orange-50 text-orange-700' : 'text-slate-500',

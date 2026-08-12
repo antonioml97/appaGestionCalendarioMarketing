@@ -25,8 +25,9 @@ const normalize = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 
  * @returns Fecha parseada o la fecha por defecto de la demo.
  */
 export const parseDateParam = (value?: string | null) => {
-  const date = value ? new Date(value) : new Date('2026-06-05T09:00:00');
-  return Number.isNaN(date.getTime()) ? new Date('2026-06-05T09:00:00') : date;
+  const today = new Date();
+  const date = value ? new Date(value) : today;
+  return Number.isNaN(date.getTime()) ? today : date;
 };
 
 /**

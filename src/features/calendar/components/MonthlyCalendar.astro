@@ -49,6 +49,7 @@ const weekdays = matrix[0]?.map((cell) => capitalize(formatShortWeekday(cell.dat
           class:list={[
             'min-h-[176px] border-b border-r border-slate-100 p-3 transition hover:bg-orange-50/40',
             !day.inCurrentMonth && 'bg-slate-50/60',
+            day.isToday && 'bg-orange-50/70 ring-2 ring-inset ring-orange-300',
           ]}
         >
           <div class="mb-3 flex items-center justify-between">
@@ -65,6 +66,9 @@ const weekdays = matrix[0]?.map((cell) => capitalize(formatShortWeekday(cell.dat
               </a>
               {dayEvents.length > 4 && (
                 <span class="text-[11px] font-semibold text-slate-400">+{dayEvents.length - 4}</span>
+              )}
+              {day.isToday && (
+                <span class="text-[10px] font-bold uppercase tracking-wide text-orange-700">Hoy</span>
               )}
             </div>
             <a

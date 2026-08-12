@@ -1,5 +1,6 @@
 ---
 import { formatLongDate } from '../../../lib/format';
+import { isSameDay } from '../../../lib/calendar';
 import { buildHref } from '../../../lib/url';
 import type { ResolvedCalendarEvent } from '../../../types/planner';
 import EventCard from './EventCard.astro';
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const { focusDate, events, selectedEventId, searchParams } = Astro.props;
+const isToday = isSameDay(focusDate, new Date());
 const slotHours = Array.from({ length: 13 }, (_, index) => index + 8);
 const slotItems = slotHours.map((hour) => {
   const slotDate = new Date(
@@ -43,7 +45,12 @@ const slotItems = slotHours.map((hour) => {
 <section class="rounded-[30px] border border-white/80 bg-white/96 p-5 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)]">
   <div class="mb-5 flex items-center justify-between">
     <div>
-      <p class="font-display text-2xl font-semibold text-slate-900">{formatLongDate(focusDate)}</p>
+      <div class="flex flex-wrap items-center gap-3">
+        <p class="font-display text-2xl font-semibold text-slate-900">{formatLongDate(focusDate)}</p>
+        {isToday && (
+          <span class="rounded-full bg-orange-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-orange-700">Hoy</span>
+        )}
+      </div>
       <p class="text-sm text-slate-500">Planificación detallada del día seleccionado</p>
     </div>
     <div class="rounded-full bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700">

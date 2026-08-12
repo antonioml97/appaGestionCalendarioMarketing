@@ -1,5 +1,6 @@
 ---
 import { capitalize, formatDayMonth, formatShortWeekday } from '../../../lib/format';
+import { isSameDay } from '../../../lib/calendar';
 import { buildHref } from '../../../lib/url';
 import type { ResolvedCalendarEvent } from '../../../types/planner';
 import EventCard from './EventCard.astro';
@@ -14,12 +15,19 @@ interface Props {
 }
 
 const { weekItems, selectedEventId, searchParams } = Astro.props;
+const today = new Date();
 ---
 
 <div class="grid gap-4 lg:grid-cols-7">
 {weekItems.map((item) => (
-    <section class="rounded-[28px] border border-white/80 bg-white/92 p-4 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)]">
+    <section class:list={[
+      'rounded-[28px] border bg-white/92 p-4 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)]',
+      isSameDay(item.day, today) ? 'border-orange-300 ring-2 ring-orange-100' : 'border-white/80',
+    ]}>
       <div class="mb-4">
+        {isSameDay(item.day, today) && (
+          <span class="mb-2 inline-flex rounded-full bg-orange-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-orange-700">Hoy</span>
+        )}
         <p class="text-sm font-semibold text-slate-900">{capitalize(formatShortWeekday(item.day).replace('.', ''))}</p>
         <p class="text-xs text-slate-500">{formatDayMonth(item.day)}</p>
       </div>

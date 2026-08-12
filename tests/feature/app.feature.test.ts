@@ -34,7 +34,7 @@ const findEventTypeId = (html: string, typeName: string) => {
 
 const findEventId = (html: string, eventTitle: string) => {
   const match = html.match(
-    new RegExp(`href="/calendar\\?event=([^"&]+)[\\s\\S]*?${escapeRegExp(eventTitle)}`),
+    new RegExp(`href="/calendar\\?[^" ]*event=([^"&]+)[\\s\\S]*?${escapeRegExp(eventTitle)}`),
   );
   return match?.[1];
 };
@@ -104,6 +104,21 @@ describe('feature flows', () => {
 
     const sessionCookie = extractSessionCookie(loginResponse);
     expect(sessionCookie).toContain('planner_session=');
+
+    const emptyDayPage = await fetch(
+      `${server.baseUrl}/calendar?scope=day&date=2030-01-15T10%3A00%3A00.000Z`,
+      { headers: { Cookie: sessionCookie } },
+    );
+    const emptyDayHtml = await emptyDayPage.text();
+    expect(emptyDayHtml).toContain('Sin eventos');
+    expect(emptyDayHtml).toContain('No hay nada programado para este día.');
+
+    const emptyWeekPage = await fetch(
+      `${server.baseUrl}/calendar?scope=week&date=2030-01-15T10%3A00%3A00.000Z`,
+      { headers: { Cookie: sessionCookie } },
+    );
+    const emptyWeekHtml = await emptyWeekPage.text();
+    expect(emptyWeekHtml.match(/No hay nada programado para este día\./g)).toHaveLength(7);
 
     const clientName = `Feature Client ${Date.now()}`;
     const createClient = await fetch(`${server.baseUrl}/api/clients`, {
@@ -185,7 +200,7 @@ describe('feature flows', () => {
     expect(createEvent.status).toBe(302);
     expect(createEvent.headers.get('location')).toBe('/calendar');
 
-    const calendarPage = await fetch(`${server.baseUrl}/calendar`, {
+    const calendarPage = await fetch(`${server.baseUrl}/calendar?date=2026-06-27`, {
       headers: {
         Cookie: sessionCookie,
       },

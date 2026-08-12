@@ -30,7 +30,10 @@ export const getCalendarPageData = async (url: URL, currentUser: PlannerUser) =>
   const selectedStatuses = searchParams.getAll('status') as EventStatus[];
   const search = searchParams.get('search') ?? '';
   const modal = searchParams.get('modal');
-  const mobileScope = searchParams.get('scope') ?? 'month';
+  const requestedMobileScope = searchParams.get('scope');
+  const mobileScope = ['day', 'week', 'month'].includes(requestedMobileScope ?? '')
+    ? requestedMobileScope!
+    : 'month';
   const draftAtParam = searchParams.get('draftAt');
 
   const filteredEvents = applyEventFilters(resolvedEvents, {
@@ -69,7 +72,12 @@ export const getCalendarPageData = async (url: URL, currentUser: PlannerUser) =>
     );
   });
 
-  const agendaGroups = groupEventsByDay(agendaEvents);
+  const agendaGroups =
+    mobileScope === 'day'
+      ? [{ date: focusDate, events: dayEvents }]
+      : mobileScope === 'week'
+        ? weekItems.map(({ day, events }) => ({ date: day, events }))
+        : groupEventsByDay(agendaEvents);
   const desktopAgendaGroups = groupEventsByDay(filteredEvents);
   const workload = getWeeklyWorkload(filteredEvents, startOfWeek(focusDate));
 

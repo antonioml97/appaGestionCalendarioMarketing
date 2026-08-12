@@ -79,11 +79,11 @@ const makeResolvedEvent = (
 });
 
 describe('calendar helpers', () => {
-  it('usa la fecha demo cuando falta o es invalida', () => {
-    expect(parseDateParam().toISOString()).toBe(new Date('2026-06-05T09:00:00').toISOString());
-    expect(parseDateParam('fecha-rota').toISOString()).toBe(
-      new Date('2026-06-05T09:00:00').toISOString(),
-    );
+  it('usa el día actual cuando falta la fecha o es inválida', () => {
+    const today = dateKey(new Date());
+
+    expect(dateKey(parseDateParam())).toBe(today);
+    expect(dateKey(parseDateParam('fecha-rota'))).toBe(today);
   });
 
   it('calcula la semana empezando en lunes incluso si la fecha es domingo', () => {
